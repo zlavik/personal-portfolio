@@ -76,6 +76,7 @@ export default function Auth() {
             placeholder="Username"
           />
           <input 
+            type="password" 
             value={password} 
             onChange={e => setPassword(e.target.value)}
             placeholder="Password"

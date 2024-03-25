@@ -109,10 +109,9 @@ export default function Auth() {
     remult.user = undefined; 
   }
   async function deleteAccount() {
-    const result = await fetch("/api/deleteAccount", {
+    await fetch("/api/deleteAccount", {
       method: "POST"
     });
-    alert(result.ok)
     setSignedIn(false);
     remult.user = undefined; 
   }

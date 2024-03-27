@@ -210,6 +210,7 @@ export default function App() {
     <div>
       <Tabs
         defaultActiveKey="FinanceApp" 
+        transition={false}
         id="justify-tab-example"
         className="mb-3"
         justify
@@ -218,7 +219,6 @@ export default function App() {
         <nav className='navbar navbar-dark bg-primary'>
           <div className='container-fluid'>
             <a className='navbar-brand' href='#'>
-              Finance App
             </a>
           </div>
         </nav>
@@ -293,6 +293,13 @@ export default function App() {
         </div>
         </Tab>
         <Tab eventKey="Account" title="Account">
+        <nav className='navbar navbar-dark bg-primary'>
+          <div className='container-fluid'>
+            <a className='navbar-brand' href='#'>
+            </a>
+          </div>
+        </nav>
+
         <Navbar collapseOnSelect expand="lg" >
         <Container>
           <footer>

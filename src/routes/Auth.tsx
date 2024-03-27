@@ -1,6 +1,9 @@
 import { FormEvent, useEffect, useState } from "react";
 import { remult } from "remult";
-import App from "./App";
+import App from "./FinanceApp";
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import NavDropdown from 'react-bootstrap/NavDropdown';
 
 
 export default function Auth() {
@@ -65,8 +68,36 @@ export default function Auth() {
     }
   }
 
+  async function signOut() {
+    await fetch("/api/signOut", {
+      method: "POST"
+    });
+    setSignedIn(false);
+    remult.user = undefined; 
+  }
+
+  async function deleteAccount() {
+    await fetch("/api/deleteAccount", {
+      method: "POST"
+    });
+    setSignedIn(false);
+    remult.user = undefined; 
+  }
+
   if (!signedIn) {
     return <>
+      <Nav>
+        <Navbar.Collapse className="justify-content-end">
+          <Navbar.Text>
+            Signed in as: <a href="#login">Guest</a>
+          </Navbar.Text>
+          <NavDropdown title="Account" id="basic-nav-dropdown">
+              <NavDropdown.Item href="#action/3.1">Setting</NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item href="#action/3.2">Sign Out</NavDropdown.Item>
+          </NavDropdown>
+        </Navbar.Collapse>
+      </Nav>
       <h1>Sign in or register</h1>
       <main>
         <form onSubmit={doSignIn}>
@@ -99,21 +130,6 @@ export default function Auth() {
         </form>
       </main>
     </>
-  }
-
-  async function signOut() {
-    await fetch("/api/signOut", {
-      method: "POST"
-    });
-    setSignedIn(false);
-    remult.user = undefined; 
-  }
-  async function deleteAccount() {
-    await fetch("/api/deleteAccount", {
-      method: "POST"
-    });
-    setSignedIn(false);
-    remult.user = undefined; 
   }
 
   return (

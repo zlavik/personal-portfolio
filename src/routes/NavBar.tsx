@@ -6,13 +6,15 @@ import { NavLink } from 'react-router-dom';
 
 export default function Root() {
   return (
+
       <div className="NavbarPage">
       <Navbar bg="dark" variant='dark' collapseOnSelect expand="lg" >
         <Container>
           <Navbar.Brand as={NavLink} to={"/"}>Slavik Ferris</Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+          
           <Navbar.Collapse id="responsive-navbar-nav">
-            <Nav className="me-auto">
+          <Nav className="me-auto">
             </Nav>
             <Nav>
               <Navbar.Collapse className="justify-content-end">
@@ -23,11 +25,11 @@ export default function Root() {
                   <NavDropdown.Item as={NavLink} to={"/someOtherApp"}>Some other App</NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item href="https://github.com/zlavik">GitHub</NavDropdown.Item>
-
                 </NavDropdown>
+                
               <Nav.Link as={NavLink} to={"/contact"}>Contact</Nav.Link>
-              <Nav.Link href="https://www.linkedin.com/in/slavik-ferris/">Contact</Nav.Link>
 
+              <Nav.Link href="https://www.linkedin.com/in/slavik-ferris/">LinkedIn</Nav.Link>
               </Navbar.Collapse>
             </Nav>
           </Navbar.Collapse>

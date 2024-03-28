@@ -5,7 +5,6 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import "../App.css"
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Container from 'react-bootstrap/Container';
@@ -177,104 +176,80 @@ export default function App() {
   if (!signedIn) {
     return (
       <div>
-        
         <Tabs
           activeKey="Account"
           id="justify-tab-example"
           className="mb-3"
           justify
         >
-        <Tab eventKey="FinanceApp" title="Finance App" disabled>
-        <nav className='navbar navbar-dark bg-primary'>
-          <div className='container-fluid'>
-            <a className='navbar-brand' href='#'>
-              Finance App
-            </a>
-          </div>
-        </nav>
-        </Tab>
-        <Tab eventKey="Account" title="Account">
-          <>
-            <Nav>
-              <Navbar.Collapse className="justify-content-end">
-                <NavDropdown title="Account" id="basic-nav-dropdown">
-                    <NavDropdown.Item href="#action/3.1">Setting</NavDropdown.Item>
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item href="#action/3.2">Sign Out</NavDropdown.Item>
-                </NavDropdown>
-              </Navbar.Collapse>
-            </Nav>
+          <Tab eventKey="FinanceApp" title="Finance Tracking" disabled>
+          <nav className='navbar navbar-dark bg-primary'>
+            <div className='container-fluid'>
+              <a className='navbar-brand' href='#'>
+                Finance Tracking
+              </a>
+            </div>
+          </nav>
+          </Tab>
+          <Tab eventKey="Account" title="Account">
             <Container>
               <div className="form-bg" hidden={hidden}>
-                <div className="container">
-                    <div className="row">
-                        <div className="col-md-offset-4 col-md-4 col-sm-offset-3 col-sm-6">
-                            <div className="form-container">
-                                <form onSubmit={doSignIn} className="form-horizontal">
-                                    <h3 className="title">Login</h3>
-                                    <div className="form-group">
-                                        <span className="input-icon"><i className="fa fa-user"></i></span>
-                                        <input 
-                                        className="form-control" 
-                                        value={username} 
-                                        onChange={e => setUsername(e.target.value)}
-                                        placeholder="Username"/>
-                                    </div>
-                                    <div className="form-group">
-                                        <span className="input-icon"><i className="fa fa-lock"></i></span>
-                                        <input 
-                                        className="form-control" 
-                                        type="password" 
-                                        placeholder="Password"
-                                        value={password} 
-                                        onChange={e => setPassword(e.target.value)}
-                                        />
-                                    </div>
-                                    <span className="forgot-pass"><a href="#" onClick={() => setHidden(true)}>Need an account?</a></span>
-                                    <button className="btn signin" type="submit">Sign in</button>
-                                </form>
-                            </div>
+                <div className="form-container">
+                    <form onSubmit={doSignIn} className="form-horizontal">
+                        <h3 className="title">Login</h3>
+                        <div className="form-group">
+                            <span className="input-icon"><i className="fa fa-user"></i></span>
+                            <input 
+                            className="form-control" 
+                            value={username} 
+                            onChange={e => setUsername(e.target.value)}
+                            placeholder="Username"/>
                         </div>
-                    </div>
+                        <div className="form-group">
+                            <span className="input-icon"><i className="fa fa-lock"></i></span>
+                            <input 
+                            className="form-control" 
+                            type="password" 
+                            placeholder="Password"
+                            value={password} 
+                            onChange={e => setPassword(e.target.value)}
+                            />
+                        </div>
+                        <span className="forgot-pass"><a href="#" onClick={() => setHidden(true)}>Need an account?</a></span>
+                        <button className="btn signin" type="submit">Sign in</button>
+                    </form>
                 </div>
             </div>
             <div className="form-bg" hidden={!hidden}>
-                <div className="container">
-                    <div className="row">
-                        <div className="col-md-offset-4 col-md-4 col-sm-offset-3 col-sm-6">
-                            <div className="form-container">
-                                <form onSubmit={doRegister} className="form-horizontal">
-                                    <h3 className="title">Register</h3>
-                                    <div className="form-group">
-                                        <span className="input-icon"><i className="fa fa-user"></i></span>
-                                        <input 
-                                        className="form-control" 
-                                        value={newUsername} 
-                                        onChange={e => setNewUsername(e.target.value)}
-                                        placeholder="Username"/>
-                                    </div>
-                                    <div className="form-group">
-                                        <span className="input-icon"><i className="fa fa-lock"></i></span>
-                                        <input 
-                                        className="form-control" 
-                                        type="password" 
-                                        placeholder="Password"
-                                        value={newPassword} 
-                                        onChange={e => setNewPassword(e.target.value)}
-                                        />
-                                    </div>
-                                    <span className="forgot-pass"><a href="#" onClick={() => setHidden(false)}>Have an account?</a></span>
-                                    <button className="btn signin" type="submit">Sign Up</button>
-                                </form>
-                            </div>
+                <div className="form-container">
+                    <form onSubmit={doRegister} className="form-horizontal">
+                        <h3 className="title">Register</h3>
+                        <div className="form-group">
+                            <span className="input-icon"><i className="fa fa-user"></i></span>
+                            <input 
+                            className="form-control" 
+                            value={newUsername} 
+                            onChange={e => setNewUsername(e.target.value)}
+                            placeholder="Username"/>
                         </div>
-                    </div>
+                        <div className="form-group">
+                            <span className="input-icon"><i className="fa fa-lock"></i></span>
+                            <input 
+                            className="form-control" 
+                            type="password" 
+                            placeholder="Password"
+                            value={newPassword} 
+                            onChange={e => setNewPassword(e.target.value)}
+                            />
+                        </div>
+                        <span className="forgot-pass"><a href="#" onClick={() => setHidden(false)}>Have an account?</a></span>
+                        <button className="btn signin" type="submit">Sign Up</button>
+                    </form>
                 </div>
             </div>
             </Container>
 
-          </>
-        </Tab>
+          </Tab>
         </Tabs>
       </div>
     )
@@ -291,17 +266,51 @@ export default function App() {
         justify
       >
         <Tab eventKey="FinanceApp" title="Finance App">
-        <nav className='navbar navbar-dark bg-primary'>
-          <div className='container-fluid'>
-            <a className='navbar-brand' href='#'>
-            </a>
-          </div>
-        </nav>
+
 
         <div className='container'>
-          <form onSubmit={addTransaction}>
+        <div id="container">
+          <div id="overview">
+            <div className="balance">
+              <h2> Balance </h2>
+              <p>$300</p>
+            </div>
+            
+            <div className="spending">
+              <h2> Spending </h2>
+              <p>$-300</p>
+            </div>
+            
+            <div className="income">
+              <h2> Income </h2>
+              <p>$300</p>
+            </div>
+            
+          </div>
+          <form onSubmit={addTransaction} >
+          <div className="entry new">
+            <input className='date' id='date' placeholder="date" name='date' onChange={handleInputChange} value={transactionData.date}/>
+            <input className='description' id='description' placeholder="description" name='description' onChange={handleInputChange} value={transactionData.description}/>
+            <input className='category' id='category' placeholder="category" name='category' onChange={handleInputChange} value={transactionData.category}/>
+            <input className='amount' id='amount' placeholder="amount" name='amount' onChange={handleInputChange} value={transactionData.amount}/>
+            <label className='is_income'>
+                Is Income?
+              </label>
+            <input type='checkbox' id='is_income'  placeholder="Income?" name='is_income' onChange={handleInputChange} checked={transactionData.is_income}/>
 
-          <div className='mb-3 mt-3'>
+            <button type='submit' className='btn btn-primary add-button'>+</button>
+          </div>
+          </form>
+
+          <div id="sheet">
+            
+          </div>
+        </div>
+
+
+          {/* <form onSubmit={addTransaction} id="financial-form">
+
+          <div className='mb-3 mt-3' >
               <label htmlFor='amount' className='form-label'>
                 Amount
               </label>
@@ -339,16 +348,15 @@ export default function App() {
             <button type='submit' className='btn btn-primary'>
               Submit
             </button>
-          </form>
+          </form> */}
           <table className='table table-striped table-bordered table-hover'>
             <thead>
               <tr>
-                <th>amount</th>
-                <th>category</th>
-                <th>description</th>
-                <th>Income?</th>
                 <th>Date</th>
-                <th>userID</th>
+                <th>description</th>
+                <th>category</th>
+                <th>amount</th>
+                <th>Income?</th>
 
               </tr>
             </thead>
@@ -356,12 +364,11 @@ export default function App() {
               {transactions.map((transaction: any) => {
                 return (
                   <tr key={transaction.id}>
-                    <td>{transaction.amount}</td>
-                    <td>{transaction.category}</td>
-                    <td>{transaction.description}</td>
-                    <td>{transaction.is_income ? 'Yes': 'No'}</td>
                     <td>{transaction.date}</td>
-                    <td>{transaction.userId}</td>
+                    <td>{transaction.description}</td>
+                    <td>{transaction.category}</td>
+                    <td>{transaction.amount}</td>
+                    <td>{transaction.is_income ? 'Yes': 'No'}</td>
 
                   </tr>
                 )
@@ -372,12 +379,7 @@ export default function App() {
         </div>
         </Tab>
         <Tab eventKey="Account" title="Account">
-        <nav className='navbar navbar-dark bg-primary'>
-          <div className='container-fluid'>
-            <a className='navbar-brand' href='#'>
-            </a>
-          </div>
-        </nav>
+
 
         <Navbar collapseOnSelect expand="lg" >
         <Container>

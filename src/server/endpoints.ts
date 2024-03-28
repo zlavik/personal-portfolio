@@ -4,6 +4,7 @@ import { remult } from "remult";
 import bcrypt from 'bcrypt';
 import { api } from "./api";
 import { Transaction, User } from "../shared/dbSchema";
+import { FinanceController } from "../shared/FinanceController";
 
 export const auth = Router();
 auth.use(express.json());
@@ -32,8 +33,8 @@ auth.post("/api/register", api.withRemult, async (req, res) => {
     await userRepo.insert(newUser);
     const user = await userRepo.findOne({ where: { username: newUsername } });
 
-    req.session!["user"] = user;
-    res.status(201).json(newUser);
+    req.session!["user"] = {id: user.id, name: user.username};
+    res.status(201).json("Success");
   } catch (error: any) {
     res.status(409).json(error.message);
   }
@@ -49,8 +50,9 @@ const userRepo = remult.repo(User);
     if (user) {
       
       if (await bcrypt.compare(password, user.password)) {
-        req.session!["user"] = user;
-        res.status(201).json(user);
+        req.session!["user"] = {id: user.id, name: user.username};
+        const currentUser = req.session!['user']
+        res.status(201).json(currentUser);
       } else {
         res.status(401).json("Invalid username or password");
       }
@@ -63,57 +65,63 @@ const userRepo = remult.repo(User);
 });
 
 auth.get("/api/loadUserTransaction", api.withRemult, async (req, res) => {
+  const userRepo = remult.repo(User);
+
+  try {
+    const user = await userRepo.findFirst({id: req.session!["user"].id});
+    const loadedTransactions = await userRepo.relations(user).transactions.find()
+    res.json(loadedTransactions);
+  } catch (error) {
+    res.status(401).json("Invalid username or password");
+  }
+});
+
+auth.post("/api/deleteAccount", api.withRemult, async (req, res) => {
   const transactionRepo = remult.repo(Transaction)
+  const userRepo = remult.repo(User);
+  const user = await userRepo.findFirst({id: req.session!["user"].id});
+  const loadedTransactions = await userRepo.relations(user).transactions.find()
+
     try {
-      const loadedTransaction = await transactionRepo.find({
-        where: {
-          userId: req.session!["user"].id,
-        },
+      loadedTransactions.forEach(async (transaction: any) => {
+        await transactionRepo.delete({transactionId:transaction.transactionId})
       });
-      res.json(loadedTransaction);
+      await userRepo.delete({
+        id: req.session!["user"].id,
+      });
+      req.session!['user'] = null;
+      res.json("Successfully deleted account");
     } catch (error) {
-      res.status(401).json("Invalid username or password");
+      res.status(401).json("could not delete");
     }
   });
 
-  auth.post("/api/deleteAccount", api.withRemult, async (req, res) => {
-    const userRepo = remult.repo(User);
-      try {
-        const deleted = await userRepo.delete({
-          id: req.session!["user"].id,
-        });
-        req.session!['user'] = null;
-        res.json(deleted);
-      } catch (error) {
-        res.status(401).json("could not delete");
-      }
-    });
-  
-    
-  
+// auth.post("/api/deleteAllTasks", api.withRemult, async (req, res) => {
+//   const userRepo = remult.repo(User);
+//   const transactionRepo = remult.repo(Transaction);
+//   try {
+//     const deletedUser = await userRepo.delete({
+//       id: req.session!["user"].id,
+//     });
+//     await transactionRepo.delete({
+//       userId: req.session!["user"].id,
+//     });
+//     req.session!['user'] = null;
+//     res.json(deletedUser);
+//   } catch (error) {
+//     res.status(401).json("could not delete");
+//   }
+// })
 
-  auth.post("/api/addUserTransaction", api.withRemult, async (req, res) => {
-    const transactionRepo = remult.repo(Transaction)
-    try {
-      const { amount, category, description, is_income, date } = req.body;
-      // Create a new user entity
-      const newTransaction = {
-        amount: amount,
-        category: category,
-        description: description,
-        is_income: is_income,
-        date: date,
-        userId: req.session!["user"].id
-      };
-      // Save the new user to the database
-      await transactionRepo.insert(newTransaction);
-      res.status(201).json(newTransaction);
-    } catch (error: any) {
-      res.status(409).json(error.message);
-    }
-  });
 
-  
+auth.post("/api/addUserTransaction", api.withRemult, async (req, res) => {
+  try {
+    await FinanceController.addUserTransaction(req.body, req.session!["user"].id)
+    res.status(201).json("Successfully added a transaction");
+  } catch (error: any) {
+    res.status(409).json(error.message);
+  }
+});
 
 auth.post("/api/signOut", (req, res) => {
   req.session!['user'] = null;

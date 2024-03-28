@@ -26,6 +26,9 @@ export class User {
   })
   password = "";
 
+  @Fields.boolean()
+  isLoggedIn = false
+
   @Relations.toMany(() => Transaction) 
   transactions?: Transaction[] 
 }
@@ -53,5 +56,5 @@ export class Transaction {
   date = ''
 
   @Relations.toOne(() => User) 
-  userId?: User["id"]
+  userId?: User
 }

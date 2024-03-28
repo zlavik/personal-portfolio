@@ -1,7 +1,7 @@
 import Container from 'react-bootstrap/Container';
-import {Nav, Navbar, NavDropdown} from 'react-bootstrap'
+import {Nav, Navbar, NavDropdown, Form, FormControl, Button} from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Outlet} from "react-router-dom";
+import { Outlet, Link, useLoaderData } from "react-router-dom";
 import { NavLink } from 'react-router-dom'; 
 
 export default function Root() {
@@ -25,7 +25,8 @@ export default function Root() {
                   <NavDropdown.Item href="https://github.com/zlavik">GitHub</NavDropdown.Item>
 
                 </NavDropdown>
-              <Nav.Link href="https://www.linkedin.com/in/slavik-ferris/">LinkedIn</Nav.Link>
+              <Nav.Link as={NavLink} to={"/contact"}>Contact</Nav.Link>
+              <Nav.Link href="https://www.linkedin.com/in/slavik-ferris/">Contact</Nav.Link>
 
               </Navbar.Collapse>
             </Nav>

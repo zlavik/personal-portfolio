@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Allow, BackendMethod, remult } from "remult";
 import bcrypt from 'bcrypt';
 import { User } from "./dbSchema";
 
 
-export class UserController {
+export class FinanceController {
   @BackendMethod({ allowed: true })
   static async register(username: string, password: string) {
     const userRepo = remult.repo(User);
@@ -51,5 +52,21 @@ export class UserController {
     } else {
       throw new Error("User not found");
     }
+  }
+
+  @BackendMethod({ allowed: Allow.authenticated })
+  static async addUserTransaction(transaction: any, id: string) {
+    const userRepo = remult.repo(User);
+    const { amount, category, description, is_income, date } = transaction;
+    const newTransaction = {
+      amount: amount,
+      category: category,
+      description: description,
+      is_income: is_income,
+      date: date,
+    };
+    const user = await userRepo.findFirst({id: id});
+    const addedTransaction = await userRepo.relations(user).transactions.insert(newTransaction)
+    return addedTransaction;
   }
 }

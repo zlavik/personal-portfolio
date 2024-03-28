@@ -15,27 +15,39 @@ export default function App() {
   const [password, setPassword] = useState(""); 
   const [newUsername, setNewUsername] = useState("");
   const [newPassword, setNewPassword] = useState(""); 
+  const [currentUser, setCurrentUser] = useState({
+    name: '',
+    id: ''
+  });
   const [signedIn, setSignedIn] = useState(false);
   const [transactions, setTransaction] = useState([]);
-  const [formData, setFormData] = useState({
+  const [transactionData, setTransactionData] = useState({
     amount: '',
     category: '',
     description: '',
     is_income: false,
     date: ''
   });
+  const [hidden, setHidden] = useState(false)
 
   useEffect(() => {
-    fetch("/api/currentUser").then(async (result) => {
-      const user = await result.json()
-      remult.user = user;
-      remult.user!.name = user.username;
-      if (remult.user) {
-        setSignedIn(true)
-        fetchTransactions();
-      }
-    });
+    async function fetchUser() {
+      fetch("/api/currentUser").then(async (result) => {
+        const user = await result.json()
+        console.log(user)
+        remult.user = user;
+        if (remult.user) {
+          fetchTransactions();
+          setCurrentUser(user);
+          setSignedIn(true);
+          setHidden(true);
+        }
+      });
+    }
+    fetchUser()
   }, []);
+
+
 
   async function doSignIn(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -50,13 +62,20 @@ export default function App() {
     if (result.ok) {
       const user = await result.json()
       remult.user = user;
-      remult.user!.name = user.username;
+      setCurrentUser(user)
+      fetchTransactions();
       setSignedIn(true);
-      setUsername("");
-      setPassword("")
+      clearForm();
     } else {
       alert(await result.json())
     }
+  }
+
+  function clearForm() {
+    setNewUsername("");
+    setNewPassword("");
+    setUsername("");
+    setPassword("");
   }
 
   async function doRegister(e: FormEvent<HTMLFormElement>) {
@@ -71,29 +90,49 @@ export default function App() {
     if (result.ok) {
       const user = await result.json()
       remult.user = user;
-      remult.user!.name = user.username;
       setSignedIn(true);
-      setNewUsername("");
-      setNewPassword("");
+      clearForm();
     } else {
       alert(await result.json())
     }
+  }
+
+  function clearPage() {
+    setTransaction([])
+    setCurrentUser({
+      name: '',
+      id: ''
+    })
+    setNewUsername("");
+    setNewPassword("");
+    setUsername("");
+    setPassword("");
+    setTransactionData({
+      amount: '',
+      category: '',
+      description: '',
+      is_income: false,
+      date: ''
+    })
+    setSignedIn(false);
+    remult.user = undefined; 
   }
 
   async function signOut() {
     await fetch("/api/signOut", {
       method: "POST"
     });
-    setSignedIn(false);
-    remult.user = undefined; 
+    clearPage();
   }
 
   async function deleteAccount() {
     await fetch("/api/deleteAccount", {
-      method: "POST"
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
     });
-    setSignedIn(false);
-    remult.user = undefined; 
+    clearPage();
   }
 
   const fetchTransactions =  async () => {
@@ -104,8 +143,8 @@ export default function App() {
 
   const handleInputChange = (event: { target: { type: string; checked: any; value: any; name: any; }; }) => {
     const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
-    setFormData({
-      ...formData,
+    setTransactionData({
+      ...transactionData,
       [event.target.name]: value,
     });
   };
@@ -117,13 +156,12 @@ export default function App() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(formData)
+      body: JSON.stringify(transactionData)
     });
-    console.log("test")
 
     if (result.ok) {
       remult.user = await result.json();
-      setFormData({
+      setTransactionData({
         amount: '',
         category: '',
         description: '',
@@ -139,6 +177,7 @@ export default function App() {
   if (!signedIn) {
     return (
       <div>
+        
         <Tabs
           activeKey="Account"
           id="justify-tab-example"
@@ -158,9 +197,6 @@ export default function App() {
           <>
             <Nav>
               <Navbar.Collapse className="justify-content-end">
-                <Navbar.Text>
-                  Signed in as: <a href="#login">Guest</a>
-                </Navbar.Text>
                 <NavDropdown title="Account" id="basic-nav-dropdown">
                     <NavDropdown.Item href="#action/3.1">Setting</NavDropdown.Item>
                     <NavDropdown.Divider />
@@ -168,37 +204,75 @@ export default function App() {
                 </NavDropdown>
               </Navbar.Collapse>
             </Nav>
-            <h1>Sign in or register</h1>
-            <main>
-              <form onSubmit={doSignIn}>
-                <input 
-                  value={username} 
-                  onChange={e => setUsername(e.target.value)}
-                  placeholder="Username"
-                />
-                <input 
-                  type="password" 
-                  value={password} 
-                  onChange={e => setPassword(e.target.value)}
-                  placeholder="Password"
-                />
-                <button type="submit">Sign In</button>
-              </form>
-              <form onSubmit={doRegister}> {/* Separate form for registration */}
-                <input 
-                  value={newUsername} 
-                  onChange={e => setNewUsername(e.target.value)}
-                  placeholder="Username"
-                />
-                <input 
-                  type="password" 
-                  value={newPassword} 
-                  onChange={e => setNewPassword(e.target.value)}
-                  placeholder="Password"
-                />
-                <button type="submit">Register</button>
-              </form>
-            </main>
+            <Container>
+              <div className="form-bg" hidden={hidden}>
+                <div className="container">
+                    <div className="row">
+                        <div className="col-md-offset-4 col-md-4 col-sm-offset-3 col-sm-6">
+                            <div className="form-container">
+                                <form onSubmit={doSignIn} className="form-horizontal">
+                                    <h3 className="title">Login</h3>
+                                    <div className="form-group">
+                                        <span className="input-icon"><i className="fa fa-user"></i></span>
+                                        <input 
+                                        className="form-control" 
+                                        value={username} 
+                                        onChange={e => setUsername(e.target.value)}
+                                        placeholder="Username"/>
+                                    </div>
+                                    <div className="form-group">
+                                        <span className="input-icon"><i className="fa fa-lock"></i></span>
+                                        <input 
+                                        className="form-control" 
+                                        type="password" 
+                                        placeholder="Password"
+                                        value={password} 
+                                        onChange={e => setPassword(e.target.value)}
+                                        />
+                                    </div>
+                                    <span className="forgot-pass"><a href="#" onClick={() => setHidden(true)}>Need an account?</a></span>
+                                    <button className="btn signin" type="submit">Sign in</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className="form-bg" hidden={!hidden}>
+                <div className="container">
+                    <div className="row">
+                        <div className="col-md-offset-4 col-md-4 col-sm-offset-3 col-sm-6">
+                            <div className="form-container">
+                                <form onSubmit={doRegister} className="form-horizontal">
+                                    <h3 className="title">Register</h3>
+                                    <div className="form-group">
+                                        <span className="input-icon"><i className="fa fa-user"></i></span>
+                                        <input 
+                                        className="form-control" 
+                                        value={newUsername} 
+                                        onChange={e => setNewUsername(e.target.value)}
+                                        placeholder="Username"/>
+                                    </div>
+                                    <div className="form-group">
+                                        <span className="input-icon"><i className="fa fa-lock"></i></span>
+                                        <input 
+                                        className="form-control" 
+                                        type="password" 
+                                        placeholder="Password"
+                                        value={newPassword} 
+                                        onChange={e => setNewPassword(e.target.value)}
+                                        />
+                                    </div>
+                                    <span className="forgot-pass"><a href="#" onClick={() => setHidden(false)}>Have an account?</a></span>
+                                    <button className="btn signin" type="submit">Sign Up</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </Container>
+
           </>
         </Tab>
         </Tabs>
@@ -208,7 +282,8 @@ export default function App() {
 
   return (
     <div>
-      <Tabs
+
+      <Tabs 
         defaultActiveKey="FinanceApp" 
         transition={false}
         id="justify-tab-example"
@@ -230,35 +305,35 @@ export default function App() {
               <label htmlFor='amount' className='form-label'>
                 Amount
               </label>
-              <input type='text' className='form-control' id='amount' name='amount' onChange={handleInputChange} value={formData.amount}/>
+              <input type='text' className='form-control' id='amount' name='amount' onChange={handleInputChange} value={transactionData.amount}/>
             </div>
 
             <div className='mb-3'>
               <label htmlFor='category' className='form-label'>
                 Category
               </label>
-              <input type='text' className='form-control' id='category' name='category' onChange={handleInputChange} value={formData.category}/>
+              <input type='text' className='form-control' id='category' name='category' onChange={handleInputChange} value={transactionData.category}/>
             </div>
 
             <div className='mb-3'>
               <label htmlFor='description' className='form-label'>
                 Description
               </label>
-              <input type='text' className='form-control' id='description' name='description' onChange={handleInputChange} value={formData.description}/>
+              <input type='text' className='form-control' id='description' name='description' onChange={handleInputChange} value={transactionData.description}/>
             </div>
 
             <div className='mb-3'>
               <label htmlFor='is_income' className='form-label'>
                 Is Income?
               </label>
-              <input type='checkbox' id='is_income' name='is_income' onChange={handleInputChange} checked={formData.is_income}/>
+              <input type='checkbox' id='is_income' name='is_income' onChange={handleInputChange} checked={transactionData.is_income}/>
             </div>
 
             <div className='mb-3'>
               <label htmlFor='date' className='form-label'>
                 Date
               </label>
-              <input type='text' className='form-control' id='date' name='date' onChange={handleInputChange} value={formData.date}/>
+              <input type='text' className='form-control' id='date' name='date' onChange={handleInputChange} value={transactionData.date}/>
             </div>
 
             <button type='submit' className='btn btn-primary'>
@@ -273,6 +348,8 @@ export default function App() {
                 <th>description</th>
                 <th>Income?</th>
                 <th>Date</th>
+                <th>userID</th>
+
               </tr>
             </thead>
             <tbody>
@@ -284,6 +361,8 @@ export default function App() {
                     <td>{transaction.description}</td>
                     <td>{transaction.is_income ? 'Yes': 'No'}</td>
                     <td>{transaction.date}</td>
+                    <td>{transaction.userId}</td>
+
                   </tr>
                 )
               })}
@@ -302,13 +381,11 @@ export default function App() {
 
         <Navbar collapseOnSelect expand="lg" >
         <Container>
-          <footer>
-            Hello {remult.user!.name} 
+            Signed in as: {currentUser.name} 
             <NavDropdown.Divider />
             <button onClick={() => signOut()}>Sign Out</button>
             <NavDropdown.Divider />
             <button onClick={() => deleteAccount()}>DELETE ACCOUNT</button>
-          </footer>
         </Container>
       </Navbar>
         </Tab>

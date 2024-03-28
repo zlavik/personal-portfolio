@@ -1,7 +1,7 @@
 import Container from 'react-bootstrap/Container';
-import {Nav, Navbar, NavDropdown, Form, FormControl, Button} from 'react-bootstrap'
+import { Nav, Navbar, NavDropdown } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Outlet, Link, useLoaderData } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { NavLink } from 'react-router-dom'; 
 
 export default function Root() {

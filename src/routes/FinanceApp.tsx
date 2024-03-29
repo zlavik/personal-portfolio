@@ -254,29 +254,29 @@ export default function App() {
         <div id="container">
           <div id="overview">
             <div className="balance">
-              <h2> Balance </h2>
+              <h2>WIP Balance </h2>
               <p>$300</p>
             </div>
             
             <div className="spending">
-              <h2> Spending </h2>
+              <h2>WIP Spending </h2>
               <p>$-300</p>
             </div>
             
             <div className="income">
-              <h2> Income </h2>
+              <h2>WIP Income </h2>
               <p>$300</p>
             </div>
             
           </div>
           <form onSubmit={addTransaction} >
           <Button variant="primary" onClick={handleShow}>
-            Launch demo modal
+          WIP Add a transaction WIP
           </Button>
 
           <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
-              <Modal.Title>Modal heading</Modal.Title>
+              <Modal.Title>New Transaction</Modal.Title>
             </Modal.Header>
             <Modal.Body>
             <Form>
@@ -311,10 +311,10 @@ export default function App() {
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={handleClose}>
-                Close
+                Cancel
               </Button>
               <Button variant="primary" onClick={handleClose}>
-                Save Changes
+                Add transaction
               </Button>
             </Modal.Footer>
           </Modal>

@@ -287,3 +287,18 @@ button {
 button:hover {
   background-color: #003d82;
 }
+
+.colPad {
+  padding-bottom: calc(var(--bs-gutter-x)* .5);
+}
+
+.cardImg {
+  position: relative;
+  left: 33%;
+}
+
+.cardStuff {
+  width: 18rem;
+  right: 1%;
+  border-color: transparent;
+}

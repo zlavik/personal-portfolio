@@ -8,6 +8,9 @@ import Tabs from 'react-bootstrap/Tabs';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Container from 'react-bootstrap/Container';
+import Form from "react-bootstrap/esm/Form";
+import FloatingLabel from "react-bootstrap/esm/FloatingLabel";
+import { Button, Col, Modal, Row } from "react-bootstrap";
 
 export default function App() {
   const [username, setUsername] = useState("");
@@ -28,14 +31,17 @@ export default function App() {
     date: ''
   });
   const [hidden, setHidden] = useState(false)
+  const [show, setShow] = useState(false);
 
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  
   useEffect(() => {
     async function fetchUser() {
       fetch("/api/currentUser").then(async (result) => {
         const user = await result.json()
-        console.log(user)
         remult.user = user;
-        if (remult.user) {
+        if (remult.user && remult.user.name) {
           fetchTransactions();
           setCurrentUser(user);
           setSignedIn(true);
@@ -197,24 +203,12 @@ export default function App() {
                 <div className="form-container">
                     <form onSubmit={doSignIn} className="form-horizontal">
                         <h3 className="title">Login</h3>
-                        <div className="form-group">
-                            <span className="input-icon"><i className="fa fa-user"></i></span>
-                            <input 
-                            className="form-control" 
-                            value={username} 
-                            onChange={e => setUsername(e.target.value)}
-                            placeholder="Username"/>
-                        </div>
-                        <div className="form-group">
-                            <span className="input-icon"><i className="fa fa-lock"></i></span>
-                            <input 
-                            className="form-control" 
-                            type="password" 
-                            placeholder="Password"
-                            value={password} 
-                            onChange={e => setPassword(e.target.value)}
-                            />
-                        </div>
+                        <FloatingLabel controlId="floatingInput" label="Username" className="mb-3" >
+                          <Form.Control placeholder="Joe" value={username} onChange={e => setUsername(e.target.value)}/>
+                        </FloatingLabel>
+                        <FloatingLabel controlId="floatingPassword" label="Password">
+                          <Form.Control type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)}/>
+                        </FloatingLabel>
                         <span className="forgot-pass"><a href="#" onClick={() => setHidden(true)}>Need an account?</a></span>
                         <button className="btn signin" type="submit">Sign in</button>
                     </form>
@@ -224,24 +218,12 @@ export default function App() {
                 <div className="form-container">
                     <form onSubmit={doRegister} className="form-horizontal">
                         <h3 className="title">Register</h3>
-                        <div className="form-group">
-                            <span className="input-icon"><i className="fa fa-user"></i></span>
-                            <input 
-                            className="form-control" 
-                            value={newUsername} 
-                            onChange={e => setNewUsername(e.target.value)}
-                            placeholder="Username"/>
-                        </div>
-                        <div className="form-group">
-                            <span className="input-icon"><i className="fa fa-lock"></i></span>
-                            <input 
-                            className="form-control" 
-                            type="password" 
-                            placeholder="Password"
-                            value={newPassword} 
-                            onChange={e => setNewPassword(e.target.value)}
-                            />
-                        </div>
+                        <FloatingLabel controlId="floatingInput" label="Username" className="mb-3" >
+                          <Form.Control placeholder="Joe" value={newUsername} onChange={e => setNewUsername(e.target.value)}/>
+                        </FloatingLabel>
+                        <FloatingLabel controlId="floatingPassword" label="Password">
+                          <Form.Control type="password" placeholder="Password" value={newPassword} onChange={e => setNewPassword(e.target.value)}/>
+                        </FloatingLabel>
                         <span className="forgot-pass"><a href="#" onClick={() => setHidden(false)}>Have an account?</a></span>
                         <button className="btn signin" type="submit">Sign Up</button>
                     </form>
@@ -288,23 +270,71 @@ export default function App() {
             
           </div>
           <form onSubmit={addTransaction} >
-          <div className="entry new">
-            <input className='date' id='date' placeholder="date" name='date' onChange={handleInputChange} value={transactionData.date}/>
-            <input className='description' id='description' placeholder="description" name='description' onChange={handleInputChange} value={transactionData.description}/>
-            <input className='category' id='category' placeholder="category" name='category' onChange={handleInputChange} value={transactionData.category}/>
-            <input className='amount' id='amount' placeholder="amount" name='amount' onChange={handleInputChange} value={transactionData.amount}/>
-            <label className='is_income'>
-                Is Income?
-              </label>
-            <input type='checkbox' id='is_income'  placeholder="Income?" name='is_income' onChange={handleInputChange} checked={transactionData.is_income}/>
+          <Button variant="primary" onClick={handleShow}>
+            Launch demo modal
+          </Button>
 
-            <button type='submit' className='btn btn-primary add-button'>+</button>
-          </div>
+          <Modal show={show} onHide={handleClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Modal heading</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+            <Form>
+              <Row className="colPad">
+                <Col>
+                  <Form.Control placeholder="Date" />
+                </Col>
+                <Col>
+                  <Form.Control placeholder="category" />
+                </Col>
+              </Row>
+              <Row className="colPad">
+                <Col>
+                  <Form.Control placeholder="description" />
+                </Col>
+
+              </Row>
+              <Row >
+              <Col>
+                  <Form.Control placeholder="$ amount" />
+                </Col>
+                <Col>
+                <Form.Check // prettier-ignore
+                  type="switch"
+                  id="custom-switch"
+                  label="Income?"
+                />
+                </Col>
+
+              </Row>
+            </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose}>
+                Close
+              </Button>
+              <Button variant="primary" onClick={handleClose}>
+                Save Changes
+              </Button>
+            </Modal.Footer>
+          </Modal>
+            <div className="entry new">
+              <input className='date' id='date' placeholder="date" name='date' onChange={handleInputChange} value={transactionData.date}/>
+              <input className='description' id='description' placeholder="description" name='description' onChange={handleInputChange} value={transactionData.description}/>
+              <input className='category' id='category' placeholder="category" name='category' onChange={handleInputChange} value={transactionData.category}/>
+              <input className='amount' id='amount' placeholder="amount" name='amount' onChange={handleInputChange} value={transactionData.amount}/>
+              <Form.Check 
+                type='checkbox'
+                id={`is_income`}
+                label={`Income?`}
+                name='is_income'
+                onChange={handleInputChange}
+                checked={transactionData.is_income}
+              />
+              <button type='submit' className='btn btn-primary add-button'>Add</button>
+            </div>
           </form>
 
-          <div id="sheet">
-            
-          </div>
         </div>
 
 

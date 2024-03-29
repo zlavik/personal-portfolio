@@ -1,0 +1,77 @@
+/*TODO code the dashboard layout using the grid*/
+.dashboard {
+  display: grid;
+  grid-template-columns: 300px repeat(3, 1fr);
+  grid-template-rows: 50% 50%;
+  height: calc(100vh - 70px);
+}
+
+.main {
+  grid-row: 1 / span 2;
+  grid-column: 1 / span 1;
+}
+
+.description {
+  grid-row: 1 / span 1;
+  grid-column: 2 / span 3;
+}
+
+.aboutMe {
+  grid-row: 1 / span 2;
+  grid-column: 2 / span 3;
+}
+
+/*media query for laptops*/
+@media(max-width: 992px) {
+  .dashboard {
+    display: block;
+  }
+}
+
+
+
+/*Some basic design for white cards*/
+.nav-minimal {
+  height: 70px;
+  background: white;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.nav-minimal img {
+  width: 50px;
+  height: 50px;
+}
+
+.dashboard-card {
+  background: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  margin: 10px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.dashboard h2 {
+  font-size: 25px;
+}
+
+.dashboard h3 {
+  font-size: 25px;
+  color: #378686;
+  margin-bottom: 15px;
+}
+
+
+.dashboard p {
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.5)
+}
+
+.dashboard img {
+  width: 100px;
+}

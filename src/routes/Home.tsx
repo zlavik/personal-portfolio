@@ -12,7 +12,7 @@ const Home = () => {
               <img src="https://cdn.wetransfer.net/assets/transfer_window/transfer_error-5cb9b360b9f6c8dbcc744c9cb436e3ff3d66aeda055c6a588f71b6ee61588e27.jpg" alt="img"/>
               <h2>Slavik Ferris</h2>
               <p>Software Engineer</p>
-              <button className="btn">Get in touch</button>
+              <a className="btn" href='https://www.linkedin.com/in/slavik-ferris/' >Get in touch</a>
             </div>
           </div>
           <div className="dashboard-card stat">

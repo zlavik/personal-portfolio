@@ -1,15 +1,12 @@
-import Container from 'react-bootstrap/Container';
-import {  Nav, Navbar, NavDropdown } from 'react-bootstrap'
+import {  Nav, Navbar } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Outlet } from "react-router-dom";
 import { NavLink } from 'react-router-dom'; 
 import "../styles/navbar.css"
-import { FormEvent } from 'react';
 
 export default function Root() {
 
-  const sideBarToggle = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const sideBarToggle = () => {
     $("html").toggleClass("openNav");
     $(".nav-toggle").toggleClass("active");
   }
@@ -18,7 +15,7 @@ export default function Root() {
       <div className="NavbarPage">
         <div className="primary-nav">
 
-        <button href="#" className="hamburger open-panel nav-toggle" onClick={sideBarToggle}>
+        <button className="hamburger open-panel nav-toggle" onClick={sideBarToggle}>
         <span className="screen-reader-text">Menu</span>
         </button>
 

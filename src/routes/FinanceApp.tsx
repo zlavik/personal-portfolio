@@ -154,8 +154,7 @@ export default function App() {
     });
   };
 
-  async function addTransaction(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  async function addTransaction() {
     const result = await fetch("/api/addUserTransaction", {
       method: "POST",
       headers: {
@@ -174,6 +173,7 @@ export default function App() {
         date: ''
       })
       fetchTransactions();
+      handleClose();
     } else {
       alert(await result.json())
     }
@@ -269,9 +269,9 @@ export default function App() {
             </div>
             
           </div>
-          <form onSubmit={addTransaction} >
+          <form>
           <Button variant="primary" onClick={handleShow}>
-          WIP Add a transaction WIP
+          Add a transaction
           </Button>
 
           <Modal show={show} onHide={handleClose}>
@@ -282,30 +282,31 @@ export default function App() {
             <Form>
               <Row className="colPad">
                 <Col>
-                  <Form.Control placeholder="Date" />
+                  <input className='date' id='date' placeholder="date" name='date' onChange={handleInputChange} value={transactionData.date}/>
                 </Col>
                 <Col>
-                  <Form.Control placeholder="category" />
+                  <input className='category' id='category' placeholder="category" name='category' onChange={handleInputChange} value={transactionData.category}/>
                 </Col>
               </Row>
               <Row className="colPad">
                 <Col>
-                  <Form.Control placeholder="description" />
+                  <input className='description' id='description' placeholder="description" name='description' onChange={handleInputChange} value={transactionData.description}/>
                 </Col>
-
               </Row>
               <Row >
-              <Col>
-                  <Form.Control placeholder="$ amount" />
+                <Col>
+                  <input className='amount' id='amount' placeholder="amount" name='amount' onChange={handleInputChange} value={transactionData.amount}/>
                 </Col>
                 <Col>
-                <Form.Check // prettier-ignore
-                  type="switch"
-                  id="custom-switch"
-                  label="Income?"
+                  <Form.Check 
+                  type='checkbox'
+                  id={`is_income`}
+                  label={`Income?`}
+                  name='is_income'
+                  onChange={handleInputChange}
+                  checked={transactionData.is_income}
                 />
                 </Col>
-
               </Row>
             </Form>
             </Modal.Body>
@@ -313,26 +314,11 @@ export default function App() {
               <Button variant="secondary" onClick={handleClose}>
                 Cancel
               </Button>
-              <Button variant="primary" onClick={handleClose}>
+              <Button variant="primary" onClick={addTransaction}>
                 Add transaction
               </Button>
             </Modal.Footer>
           </Modal>
-            <div className="entry new">
-              <input className='date' id='date' placeholder="date" name='date' onChange={handleInputChange} value={transactionData.date}/>
-              <input className='description' id='description' placeholder="description" name='description' onChange={handleInputChange} value={transactionData.description}/>
-              <input className='category' id='category' placeholder="category" name='category' onChange={handleInputChange} value={transactionData.category}/>
-              <input className='amount' id='amount' placeholder="amount" name='amount' onChange={handleInputChange} value={transactionData.amount}/>
-              <Form.Check 
-                type='checkbox'
-                id={`is_income`}
-                label={`Income?`}
-                name='is_income'
-                onChange={handleInputChange}
-                checked={transactionData.is_income}
-              />
-              <button type='submit' className='btn btn-primary add-button'>Add</button>
-            </div>
           </form>
 
         </div>

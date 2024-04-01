@@ -4,11 +4,55 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Outlet } from "react-router-dom";
 import { NavLink } from 'react-router-dom'; 
 import "../styles/navbar.css"
+import { FormEvent } from 'react';
 
 export default function Root() {
+
+  const sideBarToggle = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    $("html").toggleClass("openNav");
+    $(".nav-toggle").toggleClass("active");
+  }
+
   return (
       <div className="NavbarPage">
-          <Navbar bg="dark" variant='dark' collapseOnSelect expand="lg" >
+        <div className="primary-nav">
+
+        <button href="#" className="hamburger open-panel nav-toggle" onClick={sideBarToggle}>
+        <span className="screen-reader-text">Menu</span>
+        </button>
+
+        <nav role="navigation" className="menu">
+
+        <Navbar.Brand className="logotype" as={NavLink} to={"/"}>Slavik <span>Ferris</span></Navbar.Brand>
+
+
+          <div className="overflow-container">
+
+            <ul className="menu-dropdown">
+
+              <li><Navbar.Brand as={NavLink} to={"/"}>Home</Navbar.Brand><span className="icon"><i className="fa fa-home"></i></span></li>
+              
+
+              <li><Navbar.Brand as={NavLink} to={"/projects"}>Projects</Navbar.Brand><span className="icon"><i className="fa fa-briefcase"></i></span></li>
+
+
+              <li><Nav.Link href="https://www.linkedin.com/in/slavik-ferris/">LinkedIn</Nav.Link><span className="icon"><i className="fa fa-linkedin-square"></i></span></li>
+
+              <li><Nav.Link href="https://github.com/zlavik">GitHub</Nav.Link><span className="icon"><i className="fa fa-github"></i></span></li>
+
+            </ul>
+
+          </div>
+
+        </nav>
+
+        </div>
+
+
+      
+
+          {/* <Navbar bg="dark" variant='dark' collapseOnSelect expand="lg" >
             <Container>
               <Navbar.Brand as={NavLink} to={"/"}>Slavik Ferris</Navbar.Brand>
               <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -31,7 +75,7 @@ export default function Root() {
                 </Nav>
               </Navbar.Collapse>
             </Container>
-          </Navbar>
+          </Navbar> */}
           <Outlet />
       </div>
   );

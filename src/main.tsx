@@ -8,11 +8,9 @@ import {
  
 import App from './App'
 import Home from './routes/Home';
-import About from './routes/About';
-import Contact from './routes/Contact';
-import Auth from './routes/Auth';
 import FinanceApp from './routes/FinanceApp';
 import React from 'react';
+import Projects from './routes/Projects';
 
 const router = createBrowserRouter([
     {
@@ -24,21 +22,15 @@ const router = createBrowserRouter([
                 element: <Home />,
             },
             {
-                path: '/about',
-                element: <About />,
+                path: '/projects',
+                element: <Projects />,
             },
             {
                 path: '/financeApp',
                 element: <FinanceApp />,
             },
-            {
-                path: '/contact',
-                element: <Contact />,
-            },
-            {
-              path: '/auth',
-              element: <Auth />,
-          },
+
+
         ]
     }
 ]);

@@ -1,9 +1,17 @@
 import "../App.css"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../styles/home.scss"
+import {  Button, Modal, Navbar } from "react-bootstrap";
+import { NavLink } from 'react-router-dom'; 
+import { useState } from "react";
 
 
 const Home = () => {
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
     return (
       <div className="new-wrapper">
       <div id="main">
@@ -16,14 +24,44 @@ const Home = () => {
             <div className="card-img" style={{backgroundImage: "url('https://minutehack.com/public/images/articles/2017/08/finances.jpg')"}}>
               <div className="overlay">
                 <div className="overlay-content">
-                  <a className="hover" href="/financeApp">View Project</a>
+                  <Navbar.Brand as={NavLink} to={"/financeApp"}>View Project</Navbar.Brand>
                 </div>
               </div>
             </div>
             <div className="card-content">
-              <a href="#!">
-                <h2>Finances</h2>
-                <p>Keep track of where your money goes.</p>
+
+              <a href="#!" >
+
+                <Button variant="primary" className="hiddenBtn" onClick={handleShow}>
+                <h2>Budget Tracker</h2>
+                <p>Click here to view technologies used.</p>
+                </Button>
+                <Modal show={show} onHide={handleClose}>
+                  <Modal.Body>
+                  <h2>Technologies</h2>
+                  <table className="rwd-table center">
+
+                    <tr>
+                      <td >TypeScript</td>
+                      <td >NodeJs</td>
+                      <td >React</td>
+                      <td >Postgres</td>
+                    </tr>
+                    <tr>
+                      <td >Bootstrap</td>
+                      <td >Remult</td>
+                      <td >Express</td>
+                      <td >bcrypt</td>
+                    </tr>
+
+                  </table>
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                      Close
+                    </Button>
+                  </Modal.Footer>
+                  </Modal>
               </a>
             </div>
           </div>

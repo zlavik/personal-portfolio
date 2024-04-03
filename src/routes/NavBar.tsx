@@ -29,10 +29,6 @@ export default function Root() {
             <ul className="menu-dropdown">
 
               <li><Navbar.Brand as={NavLink} to={"/"}>Home</Navbar.Brand><span className="icon"><i className="fa fa-home"></i></span></li>
-              
-
-              <li><Navbar.Brand as={NavLink} to={"/projects"}>Projects</Navbar.Brand><span className="icon"><i className="fa fa-briefcase"></i></span></li>
-
 
               <li><Nav.Link href="https://www.linkedin.com/in/slavik-ferris/">LinkedIn</Nav.Link><span className="icon"><i className="fa fa-linkedin-square"></i></span></li>
 

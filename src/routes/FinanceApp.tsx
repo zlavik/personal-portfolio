@@ -32,9 +32,42 @@ export default function App() {
   });
   const [hidden, setHidden] = useState(false)
   const [show, setShow] = useState(false);
+  const [income, setIncome] = useState(false);
+  const [style, setStyle] = useState("lossBG");
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleIncome = () => {
+    handleStyle()
+    setIncome(!income); 
+    setTransactionData({
+      ...transactionData,
+      is_income: income,
+    });
+  };
+
+  const handleStyle = () => {
+    console.log(style)
+    if (income) {
+      setStyle("lossBG")
+    } else {
+      setStyle("incomeBG")
+
+
+    }
+  }
+
+
+  const handleClose = () => {
+    setShow(false); 
+    clearTransactionPage();
+  };
+  const handleShow = () => {
+    if (!income) {
+      setIncome(!income); 
+      handleIncome()
+    }
+    setShow(true); 
+    clearTransactionPage();
+  };
   
   useEffect(() => {
     async function fetchUser() {
@@ -102,6 +135,16 @@ export default function App() {
     }
   }
 
+  function clearTransactionPage() {
+    setTransactionData({
+      amount: '',
+      category: '',
+      description: '',
+      is_income: false,
+      date: ''
+    })
+  }
+
   function clearPage() {
     setTransaction([])
     setCurrentUser({
@@ -112,13 +155,7 @@ export default function App() {
     setNewPassword("");
     setUsername("");
     setPassword("");
-    setTransactionData({
-      amount: '',
-      category: '',
-      description: '',
-      is_income: false,
-      date: ''
-    })
+    clearTransactionPage();
     setSignedIn(false);
     remult.user = undefined; 
   }
@@ -165,13 +202,7 @@ export default function App() {
 
     if (result.ok) {
       remult.user = await result.json();
-      setTransactionData({
-        amount: '',
-        category: '',
-        description: '',
-        is_income: false,
-        date: ''
-      })
+      clearTransactionPage()
       fetchTransactions();
       handleClose();
     } else {
@@ -248,8 +279,6 @@ export default function App() {
         justify
       >
         <Tab eventKey="FinanceApp" title="Finance App">
-
-
         <div className='container'>
         <div id="container">
           <div id="overview">
@@ -257,12 +286,10 @@ export default function App() {
               <h2>WIP Balance </h2>
               <p>$300</p>
             </div>
-            
             <div className="spending">
               <h2>WIP Spending </h2>
               <p>$-300</p>
             </div>
-            
             <div className="income">
               <h2>WIP Income </h2>
               <p>$300</p>
@@ -270,42 +297,52 @@ export default function App() {
             
           </div>
           <form>
-          <Button variant="primary" onClick={handleShow}>
+          <Button variant="primary" onClick={() => handleShow()}>
           Add a transaction
           </Button>
 
-          <Modal show={show} onHide={handleClose}>
-            <Modal.Header closeButton>
+          <Modal show={show} onHide={() => handleClose()} >
+            
+            <Modal.Header closeButton className={style}>
               <Modal.Title>New Transaction</Modal.Title>
             </Modal.Header>
             <Modal.Body>
             <Form>
               <Row className="colPad">
                 <Col>
-                  <input className='date' id='date' placeholder="date" name='date' onChange={handleInputChange} value={transactionData.date}/>
+                  <input className='date' id='date' placeholder="Date" name='date' onChange={handleInputChange} value={transactionData.date}/>
                 </Col>
                 <Col>
-                  <input className='category' id='category' placeholder="category" name='category' onChange={handleInputChange} value={transactionData.category}/>
+                  <input className='category' id='category' placeholder="Category" name='category' onChange={handleInputChange} value={transactionData.category}/>
                 </Col>
               </Row>
               <Row className="colPad">
                 <Col>
-                  <input className='description' id='description' placeholder="description" name='description' onChange={handleInputChange} value={transactionData.description}/>
+                  <input className='description' id='description' placeholder="Description" name='description' onChange={handleInputChange} value={transactionData.description}/>
                 </Col>
               </Row>
               <Row >
                 <Col>
-                  <input className='amount' id='amount' placeholder="amount" name='amount' onChange={handleInputChange} value={transactionData.amount}/>
+                  <input className='amount' id='amount' placeholder="Amount" name='amount' onChange={handleInputChange} value={transactionData.amount}/>
                 </Col>
                 <Col>
-                  <Form.Check 
-                  type='checkbox'
-                  id={`is_income`}
-                  label={`Income?`}
-                  name='is_income'
-                  onChange={handleInputChange}
-                  checked={transactionData.is_income}
-                />
+                <div className="amount_container">
+                  <div className="switch_container">
+                    <input id="is_income-id" type="checkbox" className="checkbox" onChange={handleIncome} checked={transactionData.is_income}/>
+                    <label htmlFor="is_income-id" className="switch" >
+                      <span className="circle">
+                        <span className="circle-inner"></span>
+                      </span>
+                      <span className="left">Income</span>
+                      <span className="right">Loss</span>
+                    </label>
+                  </div>
+                </div>
+                </Col>
+              </Row>
+              <Row>
+              <Col>
+
                 </Col>
               </Row>
             </Form>

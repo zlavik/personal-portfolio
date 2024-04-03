@@ -125,14 +125,22 @@ input {
   padding: 0 10px 0 10px;
 }
 
-input.date {}
+input.date {
+  padding-left: 1em;
+}
 
 input.amount {
+  padding-left: 1em;
   border-left: none;
 }
 
+input.description {
+  padding-left: 1em;
+}
 
-
+input.category {
+  padding-left: 1em;
+}
 
 /* .income .amount {
   border-left: 4px solid #73BA5D;
@@ -960,3 +968,141 @@ h4,
 
 }
 
+:root {
+  --height: 2em;
+  --padding: 0.5em;
+  --width: 6.5em;
+  --clr-checked: #198754;
+  --clr-unchecked: #dc3545;
+  --clr-switch: white;
+  --speed: 300ms;
+}
+* {
+  box-sizing: border-box;
+}
+
+
+
+.amount_container {
+  display: grid;
+  grid-template-columns: 1fr 1fr .5fr; 
+  align-items: center;
+  gap: .5em;
+  padding: .5em;
+  color: white;
+  
+/*   & label {
+    width: 150%;
+  } */
+  
+  .amount_number {
+    text-align: end;
+    height: 2.2em;
+  }
+  
+  .switch_container {
+    display: grid;
+    position: relative;
+    
+    .checkbox {
+      opacity: 0;
+      position: absolute;
+      padding-block: var(--padding) ;
+
+      &:focus-visible {
+        outline: unset;  
+      }
+      &:focus-visible ~ .switch,
+      &:focus ~ .switch {
+        outline: 1px solid white;
+        border: 2px solid rgb(16 16 16);
+      }
+
+      &:checked ~ .switch {
+        background-color: var(--clr-checked);
+        .right {
+          opacity: 0;
+        }
+        .circle {
+          left: calc(100% - var(--height));
+          right: 0;
+        }
+      }
+
+      &:not(:checked) ~ .switch {
+        background-color: var(--clr-unchecked);
+        .left {
+          opacity: 0;
+        }
+        .circle {
+          left: 0;
+          right: calc(100% - var(--height));
+        }
+      }
+
+    }
+
+    .switch {
+      align-items: center;
+      background-color: gray;
+      border-radius: 1em;
+      border: 2px solid transparent;
+      cursor: pointer;
+      display: flex;
+      height: var(--height);
+      overflow: hidden;
+      padding: 0 var(--padding);
+      position: relative;
+      user-select: none;
+      width: var(--width);
+      &:focus {
+        outline: 1px red;
+      }
+      .circle {
+        height: var(--height);
+        padding: var(--padding);
+        position: absolute;
+        transition: all var(--speed) linear;
+        width: var(--height);
+
+        .circle-inner {
+          background-color: var(--clr-switch);
+          border-radius: 50%;
+          display: block;
+          height: 100%;
+          width: 100%;
+          outline: 1px solid black;
+        }
+
+      }
+      .left,
+      .right {
+        color: var(--clr-switch);
+        font-weight: bold;
+        text-transform: uppercase;
+        position: absolute;
+        opacity: 1;
+        transition: opacity var(--speed) linear;
+      }
+      .right {
+        left: calc(var(--height) );
+      }
+
+    }
+  }
+
+}
+
+.incomeBG {
+  background: hsl(0, 47%, 68%)
+}
+
+.lossBG {
+  background: hsl(137deg 20.39% 53.51%);
+
+}
+
+::placeholder {
+  color: rgb(0, 0, 0);
+  opacity: 1; /* Firefox */
+}

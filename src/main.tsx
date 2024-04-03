@@ -1,16 +1,13 @@
 // index.js
 import ReactDOM from 'react-dom/client'
- 
 import {
     RouterProvider,
     createBrowserRouter
 } from 'react-router-dom'
- 
 import App from './App'
 import Home from './routes/Home';
 import FinanceApp from './routes/FinanceApp';
 import React from 'react';
-import Projects from './routes/Projects';
 
 const router = createBrowserRouter([
     {
@@ -25,8 +22,6 @@ const router = createBrowserRouter([
                 path: '/financeApp',
                 element: <FinanceApp />,
             },
-
-
         ]
     }
 ]);

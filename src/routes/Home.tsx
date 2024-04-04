@@ -34,11 +34,11 @@ const Home = () => {
 
                 <Button variant="primary" className="hiddenBtn" onClick={handleShow}>
                 <h2>Budget Tracker</h2>
-                <p>Click here to view technologies used.</p>
+                <p>Click to view technologies</p>
                 </Button>
                 <Modal show={show} onHide={handleClose}>
                   <Modal.Body>
-                  <h2>Technologies</h2>
+                  <h2>Technologies used</h2>
                   <table className="rwd-table center">
 
                     <tr>

@@ -3,10 +3,8 @@ import { FormEvent, useEffect, useState } from "react";
 import { remult } from "remult";
 import "bootstrap/dist/css/bootstrap.min.css"
 import "../App.css"
-import NavDropdown from 'react-bootstrap/NavDropdown';
-import Container from 'react-bootstrap/Container';
+import "../styles/financeApp.scss"
 import Form from "react-bootstrap/esm/Form";
-import FloatingLabel from "react-bootstrap/esm/FloatingLabel";
 import { Button, Col, Modal, Row } from "react-bootstrap";
 
 export default function App() {
@@ -14,10 +12,7 @@ export default function App() {
   const [password, setPassword] = useState(""); 
   const [newUsername, setNewUsername] = useState("");
   const [newPassword, setNewPassword] = useState(""); 
-  const [currentUser, setCurrentUser] = useState({
-    name: '',
-    id: ''
-  });
+
   const [signedIn, setSignedIn] = useState(false);
   const [transactions, setTransaction] = useState([]);
   const [transactionData, setTransactionData] = useState({
@@ -27,10 +22,15 @@ export default function App() {
     is_income: false,
     date: ''
   });
-  const [hidden, setHidden] = useState(false)
   const [show, setShow] = useState(false);
   const [income, setIncome] = useState(false);
   const [style, setStyle] = useState("lossBG");
+  const [loginClass, setLoginClass] = useState("containerForm");
+
+  const [showDeleteButton, setShowDeleteButton] = useState(false);
+
+  const handleDeleteClose = () => setShowDeleteButton(false);
+  const handleDeleteShow = () => setShowDeleteButton(true);
 
   const handleIncome = () => {
     handleStyle()
@@ -73,9 +73,7 @@ export default function App() {
         remult.user = user;
         if (remult.user && remult.user.name) {
           fetchTransactions();
-          setCurrentUser(user);
           setSignedIn(true);
-          setHidden(true);
         }
       });
     }
@@ -97,7 +95,6 @@ export default function App() {
     if (result.ok) {
       const user = await result.json()
       remult.user = user;
-      setCurrentUser(user)
       fetchTransactions();
       setSignedIn(true);
       clearForm();
@@ -144,16 +141,14 @@ export default function App() {
 
   function clearPage() {
     setTransaction([])
-    setCurrentUser({
-      name: '',
-      id: ''
-    })
+
     setNewUsername("");
     setNewPassword("");
     setUsername("");
     setPassword("");
     clearTransactionPage();
     setSignedIn(false);
+    setShowDeleteButton(false);
     remult.user = undefined; 
   }
 
@@ -209,53 +204,71 @@ export default function App() {
 
   if (!signedIn) {
     return (
-      <div>
-        <div className="container">
-          <main className="main-content">
-            <div className="top-container">
-              <div>
-                <h1>Please sign in or sign up to use app</h1>
-              </div>
-              <div className="user-nav">
-                <div className="user-info">
-                  <Container>
-                    <div className="form-bg" hidden={hidden}>
-                      <div className="form-container">
-                          <form onSubmit={doSignIn} className="form-horizontal">
-                              <h3 className="title">Login</h3>
-                              <FloatingLabel controlId="floatingInput" label="Username" className="mb-3" >
-                                <Form.Control placeholder="Joe" value={username} onChange={e => setUsername(e.target.value)}/>
-                              </FloatingLabel>
-                              <FloatingLabel controlId="floatingPassword" label="Password">
-                                <Form.Control type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)}/>
-                              </FloatingLabel>
-                              <span className="forgot-pass"><a href="#" onClick={() => setHidden(true)}>Need an account?</a></span>
-                              <button className="btn signin" type="submit">Sign in</button>
-                          </form>
-                      </div>
-                    </div>
-                    <div className="form-bg" hidden={!hidden}>
-                        <div className="form-container">
-                            <form onSubmit={doRegister} className="form-horizontal">
-                                <h3 className="title">Register</h3>
-                                <FloatingLabel controlId="floatingInput" label="Username" className="mb-3" >
-                                  <Form.Control placeholder="Joe" value={newUsername} onChange={e => setNewUsername(e.target.value)}/>
-                                </FloatingLabel>
-                                <FloatingLabel controlId="floatingPassword" label="Password">
-                                  <Form.Control type="password" placeholder="Password" value={newPassword} onChange={e => setNewPassword(e.target.value)}/>
-                                </FloatingLabel>
-                                <span className="forgot-pass"><a href="#" onClick={() => setHidden(false)}>Have an account?</a></span>
-                                <button className="btn signin" type="submit">Sign Up</button>
-                            </form>
-                        </div>
-                    </div>
-                  </Container>             
+      <body>
+        <div className={loginClass}>
+          <div className="forms-containerForm">
+            <div className="signin-signup">
+
+              <form onSubmit={doSignIn} className="sign-in-form">
+                <h2 className="title">Sign in</h2>
+                <div className="input-field">
+                  <i className="fas fa-user"></i>
+                  <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
                 </div>
-              </div>
+                <div className="input-field">
+                  <i className="fas fa-lock"></i>
+                  <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
+                </div>
+                <input type="submit" value="Login" className="btn solid" />
+              </form>
+              <form onSubmit={doRegister} className="sign-up-form">
+                <h2 className="title">Sign up</h2>
+                <div className="input-field">
+                  <i className="fas fa-user"></i>
+                  <input type="text" placeholder="Username" value={newUsername} onChange={e => setNewUsername(e.target.value)}/>
+                </div>
+                {/* <div className="input-field">
+                  <i className="fas fa-envelope"></i>
+                  <input type="email" placeholder="Email" />
+                </div> */}
+                <div className="input-field">
+                  <i className="fas fa-lock"></i>
+                  <input type="password" placeholder="Password" value={newPassword} onChange={e => setNewPassword(e.target.value)}/>
+                </div>
+                <input type="submit" className="btn" value="Sign up" />
+                
+              </form>
             </div>
-          </main>
+          </div>
+
+          <div className="panels-containerForm">
+            <div className="panel left-panel">
+              <div className="content">
+                <h3>New here?</h3>
+                <p>
+                  To use this app you need an account to store your transactions.
+                </p>
+                <button className="btn transparent" id="sign-up-btn" onClick={() => setLoginClass("containerForm sign-up-mode")} >
+                  Sign up
+                </button>
+              </div>
+              <img src="img/log.svg" className="image" alt="" />
+            </div>
+            <div className="panel right-panel">
+              <div className="content">
+                <h3>Already have an account?</h3>
+                <p>
+                  Please sign in.
+                </p>
+                <button className="btn transparent" id="sign-in-btn" onClick={() => setLoginClass("containerForm")}>
+                  Sign in
+                </button>
+              </div>
+              <img src="img/register.svg" className="image" alt="" />
+            </div>
+          </div>
         </div>
-      </div>
+      </body>
     )
   }
 
@@ -265,32 +278,38 @@ export default function App() {
        <div className="container">
         <main className="main-content">
           <div className="top-container">
+            
             <div>
             </div>
             <div className="user-nav">
-              <button className="notification">
-                  <svg className="notification__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12.0201 2.91003C8.71009 2.91003 6.02009 5.60003 6.02009 8.91003V11.8C6.02009 12.41 5.76009 13.34 5.45009 13.86L4.30009 15.77C3.59009 16.95 4.08009 18.26 5.38009 18.7C9.69009 20.14 14.3401 20.14 18.6501 18.7C19.8601 18.3 20.3901 16.87 19.7301 15.77L18.5801 13.86C18.2801 13.34 18.0201 12.41 18.0201 11.8V8.91003C18.0201 5.61003 15.3201 2.91003 12.0201 2.91003Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"/>
-                      <path d="M13.8699 3.19994C13.5599 3.10994 13.2399 3.03994 12.9099 2.99994C11.9499 2.87994 11.0299 2.94994 10.1699 3.19994C10.4599 2.45994 11.1799 1.93994 12.0199 1.93994C12.8599 1.93994 13.5799 2.45994 13.8699 3.19994Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                      <path d="M15.02 19.0601C15.02 20.7101 13.67 22.0601 12.02 22.0601C11.2 22.0601 10.44 21.7201 9.90002 21.1801C9.36002 20.6401 9.02002 19.8801 9.02002 19.0601" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                  </svg>                            
-              </button>
+
               <div className="user-info">
-                  <svg className="user-image" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <rect width="24" height="24" fill="white" fill-opacity="0.01"/>
-                      <path fill-rule="evenodd" clip-rule="evenodd" d="M1 12C1 18.0751 5.92487 23 12 23C18.0751 23 23 18.0751 23 12C23 5.92487 18.0751 1 12 1C5.92487 1 1 5.92487 1 12ZM21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12ZM12.0321 19C8.67459 19 6.80643 17.2316 6.80643 14V13H17.1158L17.1434 13.9715C17.2358 17.2145 15.4003 19 12.0321 19ZM15.0875 15C14.8526 16.3955 13.9089 17 12.0321 17C10.1563 17 9.18179 16.3902 8.89677 15H15.0875ZM14 8H17V10H14V8ZM10 8H7V10H10V8Z" fill="black"/>
-                  </svg>
-                  <span className="user-name">{currentUser.name}</span>       
-                  <Container>
-                    <NavDropdown.Divider />
-                    <button onClick={() => signOut()}>Sign Out</button>
-                    <NavDropdown.Divider />
-                    <button onClick={() => deleteAccount()}>DELETE ACCOUNT</button>
-                </Container>                 
-              </div>
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M16.5999 7.45837L11.1666 12.8917C10.5249 13.5334 9.4749 13.5334 8.83324 12.8917L3.3999 7.45837" stroke="#596780" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>    
+
+                  <div className="sec-center"> 	
+                  
+                    <input className="dropdown" type="checkbox" id="dropdown" name="dropdown"/>
+                    <label className="for-dropdown" htmlFor="dropdown">Setting<i className="fa fa-bars" aria-hidden="true"></i>
+                    </label>
+                      <div className="section-dropdown"> 
+                        <a onClick={() => signOut()}>Sign Out <i className="fa fa-sign-in" aria-hidden="true"></i></a>
+                        <a onClick={handleDeleteShow}>DELETE ACCOUNT<i className="fa fa-trash" aria-hidden="true"></i></a>
+                        <Modal show={showDeleteButton} onHide={handleDeleteClose}>
+                          <Modal.Header closeButton>
+                            <Modal.Title>Delete Account?</Modal.Title>
+                          </Modal.Header>
+                          <Modal.Body>This will delete your account and cannot be undone. Are you sure?</Modal.Body>
+                          <Modal.Footer>
+                            <Button variant="secondary" onClick={handleDeleteClose}>
+                              Cancel
+                            </Button>
+                            <Button  variant="danger" onClick={() => deleteAccount()}>
+                              Delete Account
+                            </Button>
+                          </Modal.Footer>
+                        </Modal>
+                      </div>
+                    </div>
+                  </div>
             </div>
           </div>
           <div className="bottom-container">
@@ -487,6 +506,7 @@ export default function App() {
                     </div>
                     $8.000.00
                   </div>
+                  
                   <div className="pie-chart__labels-item">
                     <div className="label">
                       <div className="label__color second"></div>

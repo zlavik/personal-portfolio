@@ -40,20 +40,25 @@ export class Transaction {
   @Fields.cuid()
   transactionId = '';
 
-  @Fields.number()
-  amount = 0
-
   @Fields.string()
-  category = ''
+  date = ''
 
   @Fields.string()
   description = ''
 
+  @Fields.string()
+  amount = ''
+
+  @Fields.string()
+  transactionType = ''
+
+  @Fields.string()
+  category = ''
+
   @Fields.boolean()
   is_income = false
 
-  @Fields.string()
-  date = ''
+
 
   @Relations.toOne(() => User) 
   userId?: User

@@ -1758,6 +1758,7 @@ form.sign-in-form {
 }
 
 .input-field input {
+  padding-top: 5%;
   background: none;
   outline: none;
   border: none;
@@ -1994,7 +1995,7 @@ form.sign-in-form {
 
   .panel p {
     font-size: 0.7rem;
-    padding: 0.5rem 0;
+    padding-left: 5%;
   }
 
   .btn.transparent {

@@ -135,7 +135,7 @@ auth.get("/api/currentUser", (req, res) => {
   res.json(currentUser);
 });
 
-auth.get('/*', function(req, res) {
+auth.get('/*', function(_req, res) {
   res.sendFile(path.join(__dirname, '../App.tsx'), function(err) {
     if (err) {
       res.status(500).send(err)

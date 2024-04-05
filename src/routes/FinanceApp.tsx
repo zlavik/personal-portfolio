@@ -273,7 +273,7 @@ export default function App() {
   }
 
   return (
-    <div>
+    <div className="padPage">
       <body>
        <div className="container">
         <main className="main-content">
@@ -291,18 +291,18 @@ export default function App() {
                     <label className="for-dropdown" htmlFor="dropdown">Setting<i className="fa fa-bars" aria-hidden="true"></i>
                     </label>
                       <div className="section-dropdown"> 
-                        <a onClick={() => signOut()}>Sign Out <i className="fa fa-sign-in" aria-hidden="true"></i></a>
-                        <a onClick={handleDeleteShow}>DELETE ACCOUNT<i className="fa fa-trash" aria-hidden="true"></i></a>
+                        <a className="signOutDropdown" onClick={() => signOut()}>Sign Out <i className="fa fa-sign-in" aria-hidden="true"></i></a>
+                        <a className="signOutDropdown" onClick={handleDeleteShow}>DELETE ACCOUNT<i className="fa fa-trash" aria-hidden="true"></i></a>
                         <Modal show={showDeleteButton} onHide={handleDeleteClose}>
-                          <Modal.Header closeButton>
-                            <Modal.Title>Delete Account?</Modal.Title>
+                          <Modal.Header className="centerTxt" style={{display:"unset"}} closeButton>
+                            <Modal.Title  >Delete Account?</Modal.Title>
                           </Modal.Header>
-                          <Modal.Body>This will delete your account and cannot be undone. Are you sure?</Modal.Body>
+                          <Modal.Body className="centerTxt">This cannot be undone. Are you sure?</Modal.Body>
                           <Modal.Footer>
                             <Button variant="secondary" onClick={handleDeleteClose}>
                               Cancel
                             </Button>
-                            <Button  variant="danger" onClick={() => deleteAccount()}>
+                            <Button variant="danger" onClick={() => deleteAccount()}>
                               Delete Account
                             </Button>
                           </Modal.Footer>

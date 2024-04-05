@@ -1608,9 +1608,6 @@ tr > td:first-child {
       font-size: 18px;
   }
 
-  table, tbody, th, td, tr { 
-  display: block; 
-}
 
   tr > th {
       position: absolute;
@@ -1635,9 +1632,6 @@ tr > td:first-child {
       text-align: end;
   }
 
-  tr > td:first-child {
-      justify-content: end;
-  }
 
   td:nth-of-type(1):before { content: "Transactions"; }
   td:nth-of-type(2):before { content: "Date"; }
@@ -1675,7 +1669,6 @@ tr > td:first-child {
 }
 
 
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap");
 
 * {
   margin: 0;
@@ -1897,7 +1890,6 @@ form.sign-in-form {
   background: none;
   border: 2px solid #fff;
   width: 130px;
-  height: 41px;
   font-weight: 600;
   font-size: 0.8rem;
 }
@@ -2080,7 +2072,6 @@ form.sign-in-form {
 /* Please ❤ this if you like it! */
 
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
 
 *,
 *::before,
@@ -2102,7 +2093,7 @@ form.sign-in-form {
   pointer-events: none;
 }
 
-.dropdown+ label{
+.dropdown + label{
   position: relative;
   font-family: 'Roboto', sans-serif;
   font-weight: 500;
@@ -2112,7 +2103,7 @@ form.sign-in-form {
   transition: all 200ms linear;
   border-radius: 4px;
   width: 220px;
-  letter-spacing: 1px;
+  letter-spacing: 5px;
   display: -webkit-inline-flex;
   display: -ms-inline-flexbox;
   display: inline-flex;
@@ -2132,7 +2123,9 @@ form.sign-in-form {
   color: #102770;
   box-shadow: 0 12px 35px 0 rgba(255,235,167,.15);
 }
-
+.dropdown+ label:before:hover  {
+  color: wheat;
+}
 .dropdown+ label:before,
 .dropdown + label:before{
   position: fixed;
@@ -2183,10 +2176,10 @@ form.sign-in-form {
   transform: translateY(0);
 }
 
-a {
+.signOutDropdown {
   cursor: pointer;
   position: relative;
-  color: #fff;
+  color: #252424;
   transition: all 200ms linear;
   font-family: 'Roboto', sans-serif;
   font-weight: 500;
@@ -2208,11 +2201,25 @@ a {
     -ms-flex-pack: distribute;
 }
 
-a:hover {
+.signOutDropdown:hover {
   color: #102770;
-  background-color: #ffeba7;
+  background-color: #868686;
 }
 
-a .uil {
+.signOutDropdown .uil {
   font-size: 22px;
+}
+
+.centerTxt {
+  text-align: center;
+  display: unset;
+}
+
+.deleteBtn {
+  background: #a92c2c;
+}
+
+.padPage {
+  padding-left: 10%;
+  padding-right: 5%;
 }

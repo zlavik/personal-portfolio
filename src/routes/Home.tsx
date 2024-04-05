@@ -34,7 +34,7 @@ const Home = () => {
 
                 <Button variant="primary" className="hiddenBtn" onClick={handleShow}>
                 <h2>Budget Tracker</h2>
-                <p>Click to view technologies</p>
+                <p>Click to view technologies used.</p>
                 </Button>
                 <Modal show={show} onHide={handleClose}>
                   <Modal.Body>

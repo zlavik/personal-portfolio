@@ -5,6 +5,8 @@ import bcrypt from 'bcrypt';
 import { api } from "./api";
 import { Transaction, User } from "../shared/dbSchema";
 import { FinanceController } from "../shared/FinanceController";
+import { render } from "react-dom";
+import { useNavigate } from "react-router-dom";
 
 export const auth = Router();
 auth.use(express.json());
@@ -67,7 +69,6 @@ const userRepo = remult.repo(User);
 
 auth.get("/api/loadUserTransaction", api.withRemult, async (req, res) => {
   const userRepo = remult.repo(User);
-
   try {
     const user = await userRepo.findFirst({id: req.session!["user"].id});
     const loadedTransactions = await userRepo.relations(user).transactions.find()
@@ -124,6 +125,10 @@ auth.post("/api/addUserTransaction", api.withRemult, async (req, res) => {
   }
 });
 
+auth.get("/financeApp", () => {
+  const navigate = useNavigate();
+  navigate('/');
+})
 auth.post("/api/signOut", (req, res) => {
   req.session!['user'] = null;
   res.json("ok")

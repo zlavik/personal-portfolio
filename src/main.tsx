@@ -4,15 +4,15 @@ import {
     RouterProvider,
     createBrowserRouter
 } from 'react-router-dom'
+import App from './App'
 import Home from './routes/Home';
 import FinanceApp from './routes/FinanceApp';
 import React from 'react';
-import NavBar from './routes/NavBar';
 
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <NavBar />,
+        element: <App />,
         children: [
             {
                 path: '/',

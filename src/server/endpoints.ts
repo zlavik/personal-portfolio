@@ -5,7 +5,6 @@ import bcrypt from 'bcrypt';
 import { api } from "./api";
 import { Transaction, User } from "../shared/dbSchema";
 import { FinanceController } from "../shared/FinanceController";
-import { render } from "react-dom";
 import { useNavigate } from "react-router-dom";
 
 export const auth = Router();

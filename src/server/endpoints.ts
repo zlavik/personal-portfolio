@@ -5,7 +5,6 @@ import bcrypt from 'bcrypt';
 import { api } from "./api";
 import { Transaction, User } from "../shared/dbSchema";
 import { FinanceController } from "../shared/FinanceController";
-import { useNavigate } from "react-router-dom";
 
 export const auth = Router();
 auth.use(express.json());
@@ -124,10 +123,7 @@ auth.post("/api/addUserTransaction", api.withRemult, async (req, res) => {
   }
 });
 
-auth.get("/financeApp", () => {
-  const navigate = useNavigate();
-  navigate('/');
-})
+
 auth.post("/api/signOut", (req, res) => {
   req.session!['user'] = null;
   res.json("ok")

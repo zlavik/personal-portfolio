@@ -1,4 +1,4 @@
-// index.js
+// main.tsx
 import ReactDOM from 'react-dom/client'
 import {
     RouterProvider,
@@ -12,18 +12,22 @@ import NavBar from './components/NavBar';
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <NavBar />,
-        children: [
-            {
-                path: '/',
-                element: <Home />,
-            },
-            {
-                path: '/financeApp',
-                element: <FinanceApp />,
-            },
-        ]
-    }
+        element: (
+            <>
+                <NavBar />
+                <Home />
+            </>
+        ),
+    },
+    {
+        path: '/financeApp',
+        element: (
+            <>
+                <NavBar />
+                <FinanceApp />
+            </>
+        ),
+    },
 ]);
  
 ReactDOM.createRoot(document.getElementById('root')!)

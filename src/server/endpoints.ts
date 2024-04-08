@@ -5,7 +5,6 @@ import bcrypt from 'bcrypt';
 import { api } from "./api";
 import { Transaction, User } from "../shared/dbSchema";
 import { FinanceController } from "../shared/FinanceController";
-import path from "path";
 
 export const auth = Router();
 auth.use(express.json());
@@ -123,15 +122,6 @@ auth.post("/api/addUserTransaction", api.withRemult, async (req, res) => {
     res.status(409).json(error.message);
   }
 });
-
-auth.get("/*", function (_req, res) {
-  res.sendFile(path.join(__dirname, "dist/index.html"), function (err) {
-    if (err) {
-      res.status(500).send(err);
-    }
-  });
-});
-
 
 auth.post("/api/signOut", (req, res) => {
   req.session!['user'] = null;

@@ -7,7 +7,7 @@ import {
 import Home from './routes/Home';
 import FinanceApp from './routes/FinanceApp';
 import React from 'react';
-import NavBar from './components/NavBar';
+import NavBar from './routes/NavBar';
 
 const router = createBrowserRouter([
     {

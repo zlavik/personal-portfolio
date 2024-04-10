@@ -6,10 +6,10 @@ import { api } from "./api";
 import { Transaction, User } from "../shared/dbSchema";
 import { FinanceController } from "../shared/FinanceController";
 
-export const auth = Router();
-auth.use(express.json());
+export const router = Router();
+router.use(express.json());
 
-auth.post("/api/register", api.withRemult, async (req, res) => {
+router.post("/api/register", api.withRemult, async (req, res) => {
   const userRepo = remult.repo(User);
   try {
     const { newUsername, newPassword } = req.body;
@@ -40,8 +40,17 @@ auth.post("/api/register", api.withRemult, async (req, res) => {
   }
 });
 
+router.delete("/api/deleteTransaction/:transactionId", api.withRemult, async (req, res) => {
+  const transactionRepo = remult.repo(Transaction);
+  try {
+    await transactionRepo.delete(req.params.transactionId);
+    res.status(200).json("Transaction deleted successfully");
+  } catch (error) {
+    res.status(400).json("Error deleting transaction");
+  }
+}); 
 
-auth.post("/api/signIn", api.withRemult, async (req, res) => {
+router.post("/api/signIn", api.withRemult, async (req, res) => {
 const userRepo = remult.repo(User);
   try {
     const { username, password } = req.body;
@@ -65,7 +74,7 @@ const userRepo = remult.repo(User);
   }
 });
 
-auth.get("/api/loadUserTransaction", api.withRemult, async (req, res) => {
+router.get("/api/loadUserTransaction", api.withRemult, async (req, res) => {
   const userRepo = remult.repo(User);
   try {
     const user = await userRepo.findFirst({id: req.session!["user"].id});
@@ -76,7 +85,7 @@ auth.get("/api/loadUserTransaction", api.withRemult, async (req, res) => {
   }
 });
 
-auth.post("/api/deleteAccount", api.withRemult, async (req, res) => {
+router.post("/api/deleteAccount", api.withRemult, async (req, res) => {
   const transactionRepo = remult.repo(Transaction)
   const userRepo = remult.repo(User);
   const user = await userRepo.findFirst({id: req.session!["user"].id});
@@ -96,7 +105,7 @@ auth.post("/api/deleteAccount", api.withRemult, async (req, res) => {
     }
   });
 
-// auth.post("/api/deleteAllTasks", api.withRemult, async (req, res) => {
+// router.post("/api/deleteAllTasks", api.withRemult, async (req, res) => {
 //   const userRepo = remult.repo(User);
 //   const transactionRepo = remult.repo(Transaction);
 //   try {
@@ -114,7 +123,7 @@ auth.post("/api/deleteAccount", api.withRemult, async (req, res) => {
 // })
 
 
-auth.post("/api/addUserTransaction", api.withRemult, async (req, res) => {
+router.post("/api/addUserTransaction", api.withRemult, async (req, res) => {
   try {
     await FinanceController.addUserTransaction(req.body, req.session!["user"].id)
     res.status(201).json("Successfully added a transaction");
@@ -123,12 +132,12 @@ auth.post("/api/addUserTransaction", api.withRemult, async (req, res) => {
   }
 });
 
-auth.post("/api/signOut", (req, res) => {
+router.post("/api/signOut", (req, res) => {
   req.session!['user'] = null;
   res.json("ok")
 });
 
-auth.get("/api/currentUser", (req, res) => {
+router.get("/api/currentUser", (req, res) => {
   const currentUser = req.session!['user']
   res.json(currentUser);
 });

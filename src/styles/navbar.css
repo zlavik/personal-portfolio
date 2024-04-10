@@ -75,3 +75,7 @@
 .dashboard img {
   width: 100px;
 }
+
+.menu-dropdown li:last-child {
+  margin-top: calc(100vh - 115%);
+}

@@ -12,7 +12,6 @@ export default function App() {
   const [password, setPassword] = useState(""); 
   const [newUsername, setNewUsername] = useState("");
   const [newPassword, setNewPassword] = useState(""); 
-
   const [signedIn, setSignedIn] = useState(false);
   const [transactions, setTransaction] = useState([]);
   const [transactionData, setTransactionData] = useState({
@@ -22,13 +21,11 @@ export default function App() {
     is_income: false,
     date: ''
   });
-  const [show, setShow] = useState(false);
+  const [showTransactionButton, setShowTransactionButton] = useState(false);
   const [income, setIncome] = useState(false);
   const [style, setStyle] = useState("lossBG");
   const [loginClass, setLoginClass] = useState("containerForm");
-
   const [showDeleteButton, setShowDeleteButton] = useState(false);
-
   const handleDeleteClose = () => setShowDeleteButton(false);
   const handleDeleteShow = () => setShowDeleteButton(true);
 
@@ -47,22 +44,19 @@ export default function App() {
       setStyle("lossBG")
     } else {
       setStyle("incomeBG")
-
-
     }
   }
 
-
   const handleClose = () => {
-    setShow(false); 
+    setShowTransactionButton(false); 
     clearTransactionPage();
   };
   const handleShow = () => {
+    setShowTransactionButton(true); 
     if (!income) {
       setIncome(!income); 
       handleIncome()
     }
-    setShow(true); 
     clearTransactionPage();
   };
   
@@ -79,8 +73,6 @@ export default function App() {
     }
     fetchUser()
   }, []);
-
-
 
   async function doSignIn(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -202,6 +194,18 @@ export default function App() {
     }
   }
 
+  async function deleteTransaction(transactionId: string) {
+    try {
+      await fetch(`/api/deleteTransaction/${transactionId}`, {
+        method: "DELETE",
+      });
+      // Refresh the transaction list after deletion
+      await fetchTransactions();
+    } catch (error) {
+      console.error("Error deleting transaction:", error);
+    }
+  }
+
   if (!signedIn) {
     return (
       <body>
@@ -240,7 +244,6 @@ export default function App() {
               </form>
             </div>
           </div>
-
           <div className="panels-containerForm">
             <div className="panel left-panel">
               <div className="content">
@@ -278,21 +281,16 @@ export default function App() {
        <div className="container">
         <main className="main-content">
           <div className="top-container">
-            
             <div>
             </div>
             <div className="user-nav">
-
               <div className="user-info">
-
                   <div className="sec-center"> 	
-                  
-                    <input className="dropdown" type="checkbox" id="dropdown" name="dropdown"/>
-                    <label className="for-dropdown" htmlFor="dropdown">Setting<i className="fa fa-bars" aria-hidden="true"></i>
-                    </label>
-                      <div className="section-dropdown"> 
-                        <a className="signOutDropdown" onClick={() => signOut()}>Sign Out <i className="fa fa-sign-in" aria-hidden="true"></i></a>
-                        <a className="signOutDropdown" onClick={handleDeleteShow}>DELETE ACCOUNT<i className="fa fa-trash" aria-hidden="true"></i></a>
+                  <div className="container">
+                    <button className="btnSetting"><span>Settings<i className="fa fa-bars" aria-hidden="true"></i></span><i className="material-icons">{remult.user?.name}</i>
+                      <ul className="dropdown">
+                        <li className="active"><a href="#">Profile</a></li>
+                        <li><a className="signOutDropdown" onClick={handleDeleteShow}>DELETE ACCOUNT <i className="fa fa-trash" aria-hidden="true"></i></a></li>
                         <Modal show={showDeleteButton} onHide={handleDeleteClose}>
                           <Modal.Header className="centerTxt" style={{display:"unset"}} closeButton>
                             <Modal.Title  >Delete Account?</Modal.Title>
@@ -307,7 +305,10 @@ export default function App() {
                             </Button>
                           </Modal.Footer>
                         </Modal>
-                      </div>
+                        <li><a onClick={() => signOut()}>Sign Out <i className="fa fa-sign-in" aria-hidden="true"></i></a></li>
+                      </ul>
+                    </button>
+                  </div>
                     </div>
                   </div>
             </div>
@@ -364,10 +365,9 @@ export default function App() {
                       <h3 className="section-header">Transaction History</h3>
                       <form>
                         <Button variant="primary" onClick={() => handleShow()}>
-                        Add a transaction
+                          Add a transaction
                         </Button>
-                        <Modal show={show} onHide={() => handleClose()} >
-                          
+                        <Modal show={showTransactionButton} onHide={() => handleClose()} >
                           <Modal.Header closeButton className={style}>
                             <Modal.Title>New Transaction</Modal.Title>
                           </Modal.Header>
@@ -429,6 +429,7 @@ export default function App() {
                       <th>category</th>
                       <th>amount</th>
                       <th>Income?</th>
+                      <th>Actions</th>
                     </tr>
                     <tbody>
                       {transactions.map((transaction: any) => {
@@ -439,7 +440,11 @@ export default function App() {
                             <td>{transaction.category}</td>
                             <td>{transaction.amount}</td>
                             <td>{transaction.is_income ? 'Yes': 'No'}</td>
-
+                            <td>
+                              <button className="btn btn-danger btn-sm" onClick={() => deleteTransaction(transaction.transactionId)}>
+                                Delete
+                              </button>
+                            </td>
                           </tr>
                         )
                       })}

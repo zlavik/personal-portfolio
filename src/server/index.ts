@@ -1,7 +1,7 @@
 import express from "express";
 import session from "cookie-session";
 import { api } from "./api";
-import { auth } from "./endpoints";
+import { router } from "./endpoints";
 import path from "path";
 
 const app = express();
@@ -10,7 +10,7 @@ app.use(
         secret: process.env["SESSION_SECRET"] || "secret"
     })
 );
-app.use(auth);
+app.use(router);
 app.use(api);
 app.use(express.static(path.join(process.cwd(), "dist")));
 

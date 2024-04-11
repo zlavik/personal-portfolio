@@ -78,7 +78,10 @@ router.get("/api/loadUserTransaction", api.withRemult, async (req, res) => {
   const userRepo = remult.repo(User);
   try {
     const user = await userRepo.findFirst({id: req.session!["user"].id});
-    const loadedTransactions = await userRepo.relations(user).transactions.find()
+    const loadedTransactions = await userRepo.relations(user).transactions.find({
+      
+    })
+
     res.json(loadedTransactions);
   } catch (error) {
     res.status(401).json("Invalid username or password");
@@ -131,6 +134,16 @@ router.post("/api/addUserTransaction", api.withRemult, async (req, res) => {
     res.status(409).json(error.message);
   }
 });
+
+router.post("/api/importTransactions", api.withRemult, async (req, res) => {
+  try {
+    await FinanceController.importTransactions(req.body, req.session!["user"].id)
+    res.status(201).json("Successfully added a transaction");
+  } catch (error: any) {
+    res.status(409).json(error.message);
+  }
+});
+
 
 router.post("/api/signOut", (req, res) => {
   req.session!['user'] = null;

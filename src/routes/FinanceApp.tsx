@@ -16,10 +16,11 @@ export default function App() {
   const [transactions, setTransaction] = useState([]);
   const [transactionData, setTransactionData] = useState({
     amount: '',
-    category: '',
+    category: 'Other',
     description: '',
+    transactionType: 'Debit',
     is_income: false,
-    date: ''
+    date: new Date().toJSON().slice(0, 10)
   });
   const [showTransactionButton, setShowTransactionButton] = useState(false);
   const [income, setIncome] = useState(false);
@@ -28,6 +29,84 @@ export default function App() {
   const [showDeleteButton, setShowDeleteButton] = useState(false);
   const handleDeleteClose = () => setShowDeleteButton(false);
   const handleDeleteShow = () => setShowDeleteButton(true);
+  const [file, setFile] = useState();
+  const [array, setArray] = useState([]);
+
+  const fileReader = new FileReader();
+
+  const handleOnChange = (e:any) => {
+    setFile(e.target.files[0]);
+  };
+
+  const csvFileToArray = (string:string) => {
+    const csvHeader = string.slice(0, string.indexOf("\n")).split(",");
+    const csvRows = string.slice(string.indexOf("\n") + 1).split("\n");
+
+    const array:any = csvRows.map(i => {
+      const values = i.split(",");
+      const obj = csvHeader.reduce((object:any, header:any, index) => {
+        object[header] = values[index];
+        return object;
+      }, {});
+      return obj;
+    });
+
+    setArray(array);
+  };
+
+  const handleOnSubmit = async (e:any) => {
+    e.preventDefault();
+
+    if (file) {
+      fileReader.onload = function (event:any) {
+        const text = event.target.result;
+        csvFileToArray(text);
+      };
+
+      fileReader.readAsText(file);
+    }
+    console.log(array)
+    // console.log(array)
+    // array.forEach(async (transaction:any) => {
+    //   setTransactionData({
+    //     amount: transaction.amount,
+    //     category: transaction.category,
+    //     description: transaction.description,
+    //     transactionType: transaction.transactionType,
+    //     is_income: transaction.transactionType === "income" ? true : false,
+    //     date: transaction.date
+    //   })
+    //   console.log(transactionData)
+    //   await addTransaction()
+    // })
+    // const result = await fetch("/api/importTransactions", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json"
+    //   },
+    //   body: JSON.stringify(array)
+    // });
+    // if (result.ok) {
+    //   remult.user = await result.json();
+    //   clearTransactionPage()
+    //   fetchTransactions();
+    //   handleClose();
+    // } else {
+    //   alert(await result.json())
+    // }
+    handleClose();
+  };
+
+  // function filterList(list:any) {
+  //   const pattern = /(?<="\\")(.*)(?=\\"")/g;
+  //   return list.map((ele:string) => {
+  //     return pattern.exec(ele)
+
+  //   })
+  // }
+
+
+  // const headerKeys = Object.keys(Object.assign({}, ...array));
 
   const handleIncome = () => {
     handleStyle()
@@ -39,7 +118,6 @@ export default function App() {
   };
 
   const handleStyle = () => {
-    console.log(style)
     if (income) {
       setStyle("lossBG")
     } else {
@@ -60,6 +138,9 @@ export default function App() {
     clearTransactionPage();
   };
   
+
+
+
   useEffect(() => {
     async function fetchUser() {
       fetch("/api/currentUser").then(async (result) => {
@@ -124,10 +205,11 @@ export default function App() {
   function clearTransactionPage() {
     setTransactionData({
       amount: '',
-      category: '',
+      category: 'Other',
       description: '',
+      transactionType: 'Debit',
       is_income: false,
-      date: ''
+      date: new Date().toJSON().slice(0, 10)
     })
   }
 
@@ -169,10 +251,20 @@ export default function App() {
 
   const handleInputChange = (event: { target: { type: string; checked: any; value: any; name: any; }; }) => {
     const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+
     setTransactionData({
       ...transactionData,
       [event.target.name]: value,
     });
+  };
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = event.target;
+
+    setTransactionData({
+      ...transactionData,
+      [name]: value,
+    });
+
   };
 
   async function addTransaction() {
@@ -183,8 +275,8 @@ export default function App() {
       },
       body: JSON.stringify(transactionData)
     });
-
     if (result.ok) {
+      console.log(transactionData)
       remult.user = await result.json();
       clearTransactionPage()
       fetchTransactions();
@@ -361,48 +453,89 @@ export default function App() {
                   </div>
               </div>
               <div className="box transaction-box">
+
                   <div className="header-container">
+                    <i className="fa fa-plus" aria-hidden="true" onClick={() => handleShow()}></i>
+
                       <h3 className="section-header">Transaction History</h3>
+
                       <form>
-                        <Button variant="primary" onClick={() => handleShow()}>
-                          Add a transaction
-                        </Button>
+
+
+
+
                         <Modal show={showTransactionButton} onHide={() => handleClose()} >
                           <Modal.Header closeButton className={style}>
                             <Modal.Title>New Transaction</Modal.Title>
                           </Modal.Header>
                           <Modal.Body>
+                            
                           <Form>
                             <Row className="colPad">
+
                               <Col>
-                                <input className='date' id='date' placeholder="Date" name='date' onChange={handleInputChange} value={transactionData.date}/>
-                              </Col>
+                              <label  className="bx--label">Transaction Type</label>
+                                <div style={{"width": "280px;"}}>
+                                    <select className='date' name="transactionType" id="transactionType" onChange={handleSelectChange} value={transactionData.transactionType}>
+                                        <option value="Debit">Debit</option>
+                                        <option value="Credit">Credit</option>
+                                        <option value="Check">Check</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                                              </Col>
                               <Col>
-                                <input className='category' id='category' placeholder="Category" name='category' onChange={handleInputChange} value={transactionData.category}/>
+                              <label  className="bx--label">Category</label>
+                              <div style={{"width": "280px;"}}>
+                                    <select className='category' name="category" id="category" onChange={handleSelectChange} value={transactionData.category}>
+                                        <option value="Bill">Bill</option>
+                                        <option value="Car">Car</option>
+                                        <option value="House">House</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
                               </Col>
                             </Row>
                             <Row className="colPad">
                               <Col>
+                                <label  className="bx--label">Description</label>
+
                                 <input className='description' id='description' placeholder="Description" name='description' onChange={handleInputChange} value={transactionData.description}/>
+                              </Col>
+                              <Col>
+                                <div className="wrapper">
+                                  <div className="bx--form-item">
+                                    <div data-date-picker data-date-picker-type="single" className="bx--date-picker bx--date-picker--single bx--date-picker--light">
+                                      <div className="bx--date-picker-container">
+                                        <label htmlFor="date" className="bx--label">Date</label>
+                                        <input type="date"  className='date' id='date' placeholder="Date" name='date' onChange={handleInputChange} value={transactionData.date}/>
+                                        <div className="bx--form-requirement">
+                                          Invalid date format.
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
                               </Col>
                             </Row>
                             <Row >
                               <Col>
+                              <label  className="bx--label">Amount</label>
                                 <input className='amount' id='amount' placeholder="Amount" name='amount' onChange={handleInputChange} value={transactionData.amount}/>
                               </Col>
                               <Col>
-                              <div className="amount_container">
-                                <div className="switch_container">
-                                  <input id="is_income-id" type="checkbox" className="checkbox" onChange={handleIncome} checked={transactionData.is_income}/>
-                                  <label htmlFor="is_income-id" className="switch" >
-                                    <span className="circle">
-                                      <span className="circle-inner"></span>
-                                    </span>
-                                    <span className="left">Income</span>
-                                    <span className="right">Loss</span>
-                                  </label>
+                                <div className="amount_container">
+                                  <div className="switch_container">
+                                    <input id="is_income-id" type="checkbox" className="checkbox" onChange={handleIncome} checked={transactionData.is_income}/>
+                                    <label htmlFor="is_income-id" className="switch" >
+                                      <span className="circle">
+                                        <span className="circle-inner"></span>
+                                      </span>
+                                      <span className="left">Income</span>
+                                      <span className="right">Loss</span>
+                                    </label>
+                                  </div>
                                 </div>
-                              </div>
                               </Col>
                             </Row>
                             <Row>
@@ -411,45 +544,64 @@ export default function App() {
                             </Row>
                           </Form>
                           </Modal.Body>
+                          <Modal.Footer >
+                          <input
+                                type={"file"}
+                                id={"csvFileInput"}
+                                accept={".csv"}
+                                onChange={handleOnChange}/>
+                              <Button variant="secondary" onClick={(e) => {handleOnSubmit(e)}}>IMPORT CSV</Button>
+                          </Modal.Footer>
                           <Modal.Footer>
-                            <Button variant="secondary" onClick={handleClose}>
-                              Cancel
-                            </Button>
                             <Button variant="primary" onClick={addTransaction}>
                               Add transaction
                             </Button>
+                            <Button variant="secondary" onClick={handleClose}>
+                              Cancel
+                            </Button>
                           </Modal.Footer>
                         </Modal>
-                      </form>                    
+                      </form>       
                   </div>
-                  <table className="transaction-history">
-                    <tr>
-                      <th>Date</th>
-                      <th>description</th>
-                      <th>category</th>
-                      <th>amount</th>
-                      <th>Income?</th>
-                      <th>Actions</th>
-                    </tr>
-                    <tbody>
-                      {transactions.map((transaction: any) => {
-                        return (
-                          <tr key={transaction.id}>
-                            <td>{transaction.date}</td>
-                            <td>{transaction.description}</td>
-                            <td>{transaction.category}</td>
-                            <td>{transaction.amount}</td>
-                            <td>{transaction.is_income ? 'Yes': 'No'}</td>
-                            <td>
-                              <button className="btn btn-danger btn-sm" onClick={() => deleteTransaction(transaction.transactionId)}>
-                                Delete
-                              </button>
-                            </td>
-                          </tr>
-                        )
-                      })}
-                    </tbody>
-                  </table>
+                  <div className="container">
+                    <table className="responsive-table">
+                      <caption>End of transaction history</caption>
+                      <thead>
+                        <tr>
+                          <th scope="col">Description</th>
+                          <th scope="col">Date</th>
+                          <th scope="col">Category</th>
+                          <th scope="col">Amount</th>
+                          <th scope="col">Type</th>
+                          <th scope="col">Income?</th>
+                          <th scope="col">Actions</th>
+                        </tr>
+                      </thead>
+                      <tfoot>
+                        <tr>
+                          <td >
+                          </td>
+                        </tr>
+                      </tfoot>
+                      <tbody>
+                        {transactions.map((transaction: any) => {
+                          return (
+                            <tr key={transaction.transactionId}>
+                              <th scope="row">{transaction.description}</th>
+                              <td data-title="Date">{transaction.date}</td>
+                              <td data-title="Category">{transaction.category}</td>
+                              <td data-title="Amount">{transaction.amount}</td>
+                              <td data-title="Type">{transaction.transactionType}</td>
+                              <td data-title="Income?">{transaction.is_income ? 'Yes': 'No'}</td>
+                              <td data-title="Actions">
+                                <i className="fa fa-trash" aria-hidden="true" onClick={() => deleteTransaction(transaction.transactionId)}></i>
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
               </div>                   
             </div>
             <div className="bottom-container__right">

@@ -26,8 +26,6 @@ export class User {
   })
   password = "";
 
-  @Fields.boolean()
-  isLoggedIn = false
 
   @Relations.toMany(() => Transaction) 
   transactions?: Transaction[] 
@@ -57,8 +55,6 @@ export class Transaction {
 
   @Fields.boolean()
   is_income = false
-
-
 
   @Relations.toOne(() => User) 
   userId?: User

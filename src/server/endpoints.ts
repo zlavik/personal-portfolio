@@ -54,11 +54,8 @@ router.post("/api/signIn", api.withRemult, async (req, res) => {
 const userRepo = remult.repo(User);
   try {
     const { username, password } = req.body;
-
     const user = await userRepo.findOne({ where: { username: username } });
-
     if (user) {
-      
       if (await bcrypt.compare(password, user.password)) {
         req.session!["user"] = {id: user.id, name: user.username};
         const currentUser = req.session!['user']
@@ -79,7 +76,7 @@ router.get("/api/loadUserTransaction", api.withRemult, async (req, res) => {
   try {
     const user = await userRepo.findFirst({id: req.session!["user"].id});
     const loadedTransactions = await userRepo.relations(user).transactions.find({
-      
+      orderBy: { date:"desc" }
     })
 
     res.json(loadedTransactions);
@@ -125,7 +122,6 @@ router.post("/api/deleteAccount", api.withRemult, async (req, res) => {
 //   }
 // })
 
-
 router.post("/api/addUserTransaction", api.withRemult, async (req, res) => {
   try {
     await FinanceController.addUserTransaction(req.body, req.session!["user"].id)
@@ -138,12 +134,11 @@ router.post("/api/addUserTransaction", api.withRemult, async (req, res) => {
 router.post("/api/importTransactions", api.withRemult, async (req, res) => {
   try {
     await FinanceController.importTransactions(req.body, req.session!["user"].id)
-    res.status(201).json("Successfully added a transaction");
+    res.status(201).json("Successfully imported csv file");
   } catch (error: any) {
     res.status(409).json(error.message);
   }
 });
-
 
 router.post("/api/signOut", (req, res) => {
   req.session!['user'] = null;
@@ -154,4 +149,3 @@ router.get("/api/currentUser", (req, res) => {
   const currentUser = req.session!['user']
   res.json(currentUser);
 });
-

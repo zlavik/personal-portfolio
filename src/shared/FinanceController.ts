@@ -75,21 +75,19 @@ export class FinanceController {
   @BackendMethod({ allowed: Allow.authenticated })
   static async importTransactions(transactions: any, id: string) {
     const userRepo = remult.repo(User);
-    console.log(transactions)
+    const user = await userRepo.findFirst({id: id});
 
-    transactions.forEach(async (transaction:any) => {
-      const { amount, category, description, transactionType, is_income, date } = transaction;
-      console.log(transaction)
+    const result = transactions.map(async (transaction:any) => {
       const newTransaction = {
-        amount: amount,
-        category: category,
-        description: description,
-        transactionType: transactionType,
-        is_income: is_income,
-        date: date,
+        amount: transaction.amount,
+        category: transaction.category,
+        description: transaction.description,
+        transactionType: transaction.transactionType,
+        is_income: transaction.category.includes("Income") || transaction.category.includes("Paycheck") ? true : false,
+        date: transaction.date,
       };
-      const user = await userRepo.findFirst({id: id});
-      await userRepo.relations(user).transactions.insert(newTransaction)
+      return await userRepo.relations(user).transactions.insert(newTransaction)
     });
+    return result;
   }
 }

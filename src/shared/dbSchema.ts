@@ -44,8 +44,8 @@ export class Transaction {
   @Fields.string()
   description = ''
 
-  @Fields.string()
-  amount = ''
+  @Fields.number()
+  amount = 0
 
   @Fields.string()
   transactionType = ''

@@ -6,6 +6,7 @@ import "../App.css"
 import "../styles/financeApp.scss"
 import Form from "react-bootstrap/esm/Form";
 import { Button, Col, Modal, Row } from "react-bootstrap";
+import Papa from 'papaparse';
 
 export default function App() {
   const [username, setUsername] = useState("");
@@ -29,84 +30,79 @@ export default function App() {
   const [showDeleteButton, setShowDeleteButton] = useState(false);
   const handleDeleteClose = () => setShowDeleteButton(false);
   const handleDeleteShow = () => setShowDeleteButton(true);
-  const [file, setFile] = useState();
-  const [array, setArray] = useState([]);
+  const [parsedCvsFile, setParsedCvsFile] = useState([]);
 
-  const fileReader = new FileReader();
+  useEffect(() => {
+    async function fetchUser() {
+      fetch("/api/currentUser").then(async (result) => {
+        const user = await result.json()
+        remult.user = user;
+        if (remult.user && remult.user.name) {
+          fetchTransactions();
+          setSignedIn(true);
+        }
+      });
+    }
+    fetchUser()
+  }, []);
+
+
+  const fetchTransactions =  async () => {
+    await fetch("/api/loadUserTransaction").then(async (result) => {
+      if (remult.user) setTransaction(await result.json());
+    })
+  }
+
+  async function addTransaction() {
+    const result = await fetch("/api/addUserTransaction", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(transactionData)
+    });
+    if (result.ok) {
+      remult.user = await result.json();
+      clearTransactionPage()
+      fetchTransactions();
+      handleClose();
+    } else {
+      alert(await result.json())
+    }
+  }
 
   const handleOnChange = (e:any) => {
-    setFile(e.target.files[0]);
+    const file = e.target.files[0];
+    if (e.target.files[0]) {
+      // Parse local CSV file
+          Papa.parse(file, {
+            header: true,
+            complete: function(results:any) {
+              setParsedCvsFile(results.data);
+            }
+          });
+        }
   };
 
-  const csvFileToArray = (string:string) => {
-    const csvHeader = string.slice(0, string.indexOf("\n")).split(",");
-    const csvRows = string.slice(string.indexOf("\n") + 1).split("\n");
-
-    const array:any = csvRows.map(i => {
-      const values = i.split(",");
-      const obj = csvHeader.reduce((object:any, header:any, index) => {
-        object[header] = values[index];
-        return object;
-      }, {});
-      return obj;
+  async function importTransactions() {
+    const result = await fetch("/api/importTransactions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(parsedCvsFile)
     });
-
-    setArray(array);
-  };
-
-  const handleOnSubmit = async (e:any) => {
-    e.preventDefault();
-
-    if (file) {
-      fileReader.onload = function (event:any) {
-        const text = event.target.result;
-        csvFileToArray(text);
-      };
-
-      fileReader.readAsText(file);
+    if (result.ok) {
+      remult.user = await result.json();
+      setParsedCvsFile([])
+      setTimeout(function () {
+        fetchTransactions();
+    }, 500);
+      handleClose();
+    } else {
+      alert(await result.json())
     }
-    console.log(array)
-    // console.log(array)
-    // array.forEach(async (transaction:any) => {
-    //   setTransactionData({
-    //     amount: transaction.amount,
-    //     category: transaction.category,
-    //     description: transaction.description,
-    //     transactionType: transaction.transactionType,
-    //     is_income: transaction.transactionType === "income" ? true : false,
-    //     date: transaction.date
-    //   })
-    //   console.log(transactionData)
-    //   await addTransaction()
-    // })
-    // const result = await fetch("/api/importTransactions", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json"
-    //   },
-    //   body: JSON.stringify(array)
-    // });
-    // if (result.ok) {
-    //   remult.user = await result.json();
-    //   clearTransactionPage()
-    //   fetchTransactions();
-    //   handleClose();
-    // } else {
-    //   alert(await result.json())
-    // }
-    handleClose();
-  };
-
-  // function filterList(list:any) {
-  //   const pattern = /(?<="\\")(.*)(?=\\"")/g;
-  //   return list.map((ele:string) => {
-  //     return pattern.exec(ele)
-
-  //   })
-  // }
-
-
-  // const headerKeys = Object.keys(Object.assign({}, ...array));
+  }
 
   const handleIncome = () => {
     handleStyle()
@@ -129,6 +125,7 @@ export default function App() {
     setShowTransactionButton(false); 
     clearTransactionPage();
   };
+
   const handleShow = () => {
     setShowTransactionButton(true); 
     if (!income) {
@@ -138,23 +135,6 @@ export default function App() {
     clearTransactionPage();
   };
   
-
-
-
-  useEffect(() => {
-    async function fetchUser() {
-      fetch("/api/currentUser").then(async (result) => {
-        const user = await result.json()
-        remult.user = user;
-        if (remult.user && remult.user.name) {
-          fetchTransactions();
-          setSignedIn(true);
-        }
-      });
-    }
-    fetchUser()
-  }, []);
-
   async function doSignIn(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const result = await fetch("/api/signIn", {
@@ -243,12 +223,6 @@ export default function App() {
     clearPage();
   }
 
-  const fetchTransactions =  async () => {
-    await fetch("/api/loadUserTransaction").then(async (result) => {
-      if (remult.user) setTransaction(await result.json());
-    })
-  }
-
   const handleInputChange = (event: { target: { type: string; checked: any; value: any; name: any; }; }) => {
     const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
 
@@ -257,6 +231,7 @@ export default function App() {
       [event.target.name]: value,
     });
   };
+
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = event.target;
 
@@ -266,25 +241,6 @@ export default function App() {
     });
 
   };
-
-  async function addTransaction() {
-    const result = await fetch("/api/addUserTransaction", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(transactionData)
-    });
-    if (result.ok) {
-      console.log(transactionData)
-      remult.user = await result.json();
-      clearTransactionPage()
-      fetchTransactions();
-      handleClose();
-    } else {
-      alert(await result.json())
-    }
-  }
 
   async function deleteTransaction(transactionId: string) {
     try {
@@ -401,8 +357,8 @@ export default function App() {
                       </ul>
                     </button>
                   </div>
-                    </div>
-                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div className="bottom-container">
@@ -412,8 +368,8 @@ export default function App() {
                     <h3 className="section-header">Spending Statistics</h3>
                     <div className="year-selector">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect opacity="0.8" width="24" height="24" rx="6" fill="#F6F7F9"/>
-                            <path d="M13.4999 15.96L10.2399 12.7C9.85492 12.315 9.85492 11.685 10.2399 11.3L13.4999 8.04004" stroke="#1A202C" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                          <rect opacity="0.8" width="24" height="24" rx="6" fill="#F6F7F9"/>
+                          <path d="M13.4999 15.96L10.2399 12.7C9.85492 12.315 9.85492 11.685 10.2399 11.3L13.4999 8.04004" stroke="#1A202C" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                         <span>2023</span>
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -453,37 +409,29 @@ export default function App() {
                   </div>
               </div>
               <div className="box transaction-box">
-
                   <div className="header-container">
-                    <i className="fa fa-plus" aria-hidden="true" onClick={() => handleShow()}></i>
-
+                    <i className="fa fa-plus" aria-hidden="true" onClick={() => handleShow()}>Add</i>
                       <h3 className="section-header">Transaction History</h3>
-
                       <form>
-
-
-
-
                         <Modal show={showTransactionButton} onHide={() => handleClose()} >
                           <Modal.Header closeButton className={style}>
                             <Modal.Title>New Transaction</Modal.Title>
                           </Modal.Header>
                           <Modal.Body>
-                            
                           <Form>
                             <Row className="colPad">
-
                               <Col>
                               <label  className="bx--label">Transaction Type</label>
                                 <div style={{"width": "280px;"}}>
                                     <select className='date' name="transactionType" id="transactionType" onChange={handleSelectChange} value={transactionData.transactionType}>
                                         <option value="Debit">Debit</option>
+                                        <option value="Cash">Cash</option>
                                         <option value="Credit">Credit</option>
                                         <option value="Check">Check</option>
                                         <option value="Other">Other</option>
                                     </select>
                                 </div>
-                                                              </Col>
+                              </Col>
                               <Col>
                               <label  className="bx--label">Category</label>
                               <div style={{"width": "280px;"}}>
@@ -550,7 +498,7 @@ export default function App() {
                                 id={"csvFileInput"}
                                 accept={".csv"}
                                 onChange={handleOnChange}/>
-                              <Button variant="secondary" onClick={(e) => {handleOnSubmit(e)}}>IMPORT CSV</Button>
+                              <Button variant="secondary" onClick={importTransactions}>IMPORT CSV</Button>
                           </Modal.Footer>
                           <Modal.Footer>
                             <Button variant="primary" onClick={addTransaction}>
@@ -564,12 +512,12 @@ export default function App() {
                       </form>       
                   </div>
                   <div className="container">
-                    <table className="responsive-table">
+                    <table className="responsive-table" id="transactionTable">
                       <caption>End of transaction history</caption>
                       <thead>
                         <tr>
-                          <th scope="col">Description</th>
                           <th scope="col">Date</th>
+                          <th scope="col">Description</th>
                           <th scope="col">Category</th>
                           <th scope="col">Amount</th>
                           <th scope="col">Type</th>
@@ -587,8 +535,8 @@ export default function App() {
                         {transactions.map((transaction: any) => {
                           return (
                             <tr key={transaction.transactionId}>
-                              <th scope="row">{transaction.description}</th>
-                              <td data-title="Date">{transaction.date}</td>
+                              <th scope="row">{transaction.date}</th>
+                              <td data-title="Description">{transaction.description}</td>
                               <td data-title="Category">{transaction.category}</td>
                               <td data-title="Amount">{transaction.amount}</td>
                               <td data-title="Type">{transaction.transactionType}</td>

@@ -2,7 +2,7 @@ import {  Nav, Navbar } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Outlet } from "react-router-dom";
 import { NavLink } from 'react-router-dom'; 
-import "../styles/navbar.css"
+import "./navbar.css"
 
 export default function Root() {
   const sideBarToggle = () => {

@@ -21,6 +21,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
+  "include": ["src", "src/server/endpoints.ts", "src/server/api.ts", "src/server/index.ts", "src/components/Navbar/NavBar.tsx", "src/pages/Home/Home.tsx", "src/pages/Budgetd/FinanceApp.tsx", "src/pages/About/About.tsx", "src/pages/Projects/Projects.tsx", "src/shared", "src/main.tsx", "src/vite-env.d.ts", "src/App.tsx", "src/error-page.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

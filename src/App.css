@@ -1126,7 +1126,6 @@ h4,
 
 /* -------------- CONTAINER -------------- */
 .container {
-  display: flex;
   height: 100%;
 }
 

@@ -1,6 +1,7 @@
-import "../App.css"
+import "../../App.css"
+
 import 'bootstrap/dist/css/bootstrap.min.css';
-import "../styles/home.scss"
+import "./home.scss"
 import {  Button, Modal, Navbar } from "react-bootstrap";
 import { NavLink } from 'react-router-dom'; 
 import { useState } from "react";

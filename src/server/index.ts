@@ -14,7 +14,6 @@ app.use(router);
 app.use(api);
 app.use(express.static(path.join(process.cwd(), "dist")));
 
-// Catch-all route to serve the same HTML file for all routes
 app.get('*', (_req, res) => {
     res.sendFile(path.join(process.cwd(), 'dist', 'index.html'));
 });

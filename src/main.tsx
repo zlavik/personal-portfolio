@@ -4,10 +4,10 @@ import {
     RouterProvider,
     createBrowserRouter
 } from 'react-router-dom'
-import Home from './routes/Home';
-import FinanceApp from './routes/FinanceApp';
+import Home from '../src/pages/Home/Home';
+import FinanceApp from '../src/pages/Budgetd/FinanceApp';
 import React from 'react';
-import NavBar from './routes/NavBar';
+import NavBar from '../src/components/Navbar/NavBar';
 
 const router = createBrowserRouter([
     {

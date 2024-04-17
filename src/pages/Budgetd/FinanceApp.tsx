@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, SetStateAction, useEffect, useState } from "react";
 import { remult } from "remult";
 import "bootstrap/dist/css/bootstrap.min.css"
-import "../App.css"
-import "../styles/financeApp.scss"
+import "../../App.css"
+import "./financeApp.scss"
 import Form from "react-bootstrap/esm/Form";
 import { Button, Col, Modal, Row } from "react-bootstrap";
 import Papa from 'papaparse';
+import Pagination from 'rc-pagination';
+
 
 export default function App() {
   const [username, setUsername] = useState("");
@@ -31,6 +33,40 @@ export default function App() {
   const handleDeleteClose = () => setShowDeleteButton(false);
   const handleDeleteShow = () => setShowDeleteButton(true);
   const [parsedCvsFile, setParsedCvsFile] = useState([]);
+
+
+  const [perPage] = useState(10);
+  const [size, setSize] = useState(perPage);
+  const [current, setCurrent] = useState(1);
+
+  const PerPageChange = (value: any) => {
+      setSize(value);
+      const newPerPage = Math.ceil(transactions.length / value);
+      if (current > newPerPage) {
+          setCurrent(newPerPage);
+      }
+  }
+
+  const getData = (current: number, pageSize: number) => {
+      // Normally you should get the data from the server
+      fetchTransactions();
+      return transactions.slice((current - 1) * pageSize, current * pageSize);
+  };
+
+  const PaginationChange = (page: SetStateAction<number>, pageSize: SetStateAction<number>) => {
+      setCurrent(page);
+      setSize(pageSize)
+  }
+
+  const PrevNextArrow = (_current: any, type: string, originalElement: any) => {
+      if (type === 'prev') {
+          return <button><i className="fa fa-angle-double-left"></i></button>;
+      }
+      if (type === 'next') {
+          return <button><i className="fa fa-angle-double-right"></i></button>;
+      }
+      return originalElement;
+  }
 
   useEffect(() => {
     async function fetchUser() {
@@ -512,8 +548,21 @@ export default function App() {
                       </form>       
                   </div>
                   <div className="container">
+                    <div className="table-filter-info">
+
+                        <Pagination
+                          className="pagination-data"
+                          showTotal={(total, range) => `Showing ${range[0]}-${range[1]} of ${total}`}
+                          onChange={PaginationChange}
+                          total={transactions.length}
+                          current={current}
+                          pageSize={size}
+                          showSizeChanger={false}
+                          itemRender={PrevNextArrow}
+                          onShowSizeChange={PerPageChange}
+                          />
+                    </div>
                     <table className="responsive-table" id="transactionTable">
-                      <caption>End of transaction history</caption>
                       <thead>
                         <tr>
                           <th scope="col">Date</th>
@@ -525,30 +574,38 @@ export default function App() {
                           <th scope="col">Actions</th>
                         </tr>
                       </thead>
-                      <tfoot>
-                        <tr>
-                          <td >
-                          </td>
-                        </tr>
-                      </tfoot>
                       <tbody>
-                        {transactions.map((transaction: any) => {
+                        {getData(current, size).map((data:any) => {
                           return (
-                            <tr key={transaction.transactionId}>
-                              <th scope="row">{transaction.date}</th>
-                              <td data-title="Description">{transaction.description}</td>
-                              <td data-title="Category">{transaction.category}</td>
-                              <td data-title="Amount">{transaction.amount}</td>
-                              <td data-title="Type">{transaction.transactionType}</td>
-                              <td data-title="Income?">{transaction.is_income ? 'Yes': 'No'}</td>
+                            <tr key={data.transactionId}>
+                              <th scope="row">{data.date}</th>
+                              <td data-title="Description">{data.description}</td>
+                              <td data-title="Category">{data.category}</td>
+                              <td data-title="Amount">{data.amount}</td>
+                              <td data-title="Type">{data.transactionType}</td>
+                              <td data-title="Income?">{data.is_income ? 'Yes': 'No'}</td>
                               <td data-title="Actions">
-                                <i className="fa fa-trash" aria-hidden="true" onClick={() => deleteTransaction(transaction.transactionId)}></i>
+                                <i className="fa fa-trash" aria-hidden="true" onClick={() => deleteTransaction(data.transactionId)}></i>
                               </td>
                             </tr>
                           )
                         })}
                       </tbody>
                     </table>
+                    <div className="table-filter-info">
+
+                      <Pagination
+                        className="pagination-data"
+                        showTotal={(total, range) => `Showing ${range[0]}-${range[1]} of ${total}`}
+                        onChange={PaginationChange}
+                        total={transactions.length}
+                        current={current}
+                        pageSize={size}
+                        showSizeChanger={false}
+                        itemRender={PrevNextArrow}
+                        onShowSizeChange={PerPageChange}
+                        />
+                    </div>
                   </div>
               </div>                   
             </div>
